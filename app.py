@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pprint
+import json
 
 def clean_text(text):
   """Remove extra spaces, newlines, and any script/style elements."""
@@ -24,17 +25,27 @@ def set_description(soup : BeautifulSoup):
   return description
 
 def set_body(soup : BeautifulSoup):
-  if 'github.com' in stories[story]['url']:
-    body_content = soup.find(['article'], class_='markdown-body')
+  paragraphs = [p.get_text().strip() for p in soup.find_all('p')]
+  paragraph_text = ' '.join(paragraphs)
+  return paragraph_text[:2000]
+
+def call_ollama(content):
+  ollama_url = "http://localhost:11434/api/generate"
+  data = {
+    "model": "llama2",
+    "prompt": f"Summarize this text, remove all noise and tags: {content}",
+    "stream": False
+  }
+  data_json = json.dumps(data)
+
+  response = requests.post(ollama_url, data=data_json, headers={"Content-Type": "application/json"})
+
+  if response.status_code == 200:
+    data = response.json()
+    return data['response']
   else:
-    body_content = soup.find(['article', 'main'])
-    if not body_content:
-      body_content = soup.find('body')  
-
-  body = body_content.get_text() if body_content else ''
-
-  return body
-
+    print(f"Request failed with status code: {response.status_code}")
+    return None
 
 url = 'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty'
 
@@ -47,7 +58,7 @@ else:
 
 stories = dict()
 
-for story_id in top_stories[:10]:
+for story_id in top_stories[:3]:
   story_url = f'https://hacker-news.firebaseio.com/v0/item/{story_id}.json?print=pretty'
   story_response = requests.get(story_url)
   story_details = story_response.json()
@@ -56,12 +67,13 @@ for story_id in top_stories[:10]:
 articles = dict()
 
 for story in stories:
-  print(f"{stories[story]['title']} - {stories[story]['url']}")
-  content = requests.get(stories[story]['url'])
+  url = stories[story]['url']
+  print(f"{stories[story]['title']} - {url}")
+  content = requests.get(url)
 
   if content.status_code == 200:
     soup = BeautifulSoup(content.text, 'html.parser')
-    title = soup.find('title').get_text()
+    title = soup.find('title').get_text() if soup.find('title') else ''
 
     description = set_description(soup)
     body = set_body(soup)
@@ -69,7 +81,7 @@ for story in stories:
     summary = description + clean_text(body)
     short_summary = summarize_text(summary, 1000)
 
-    articles[stories[story]['url']] = {
+    articles[url] = {
       'title': title,
       'content': summary
     }
@@ -78,12 +90,18 @@ for story in stories:
   
   final = []
   for story in stories:    
+    if stories[story]['url'] in articles:
+      scraped_content = articles[stories[story]['url']]['content']
+      content = call_ollama(scraped_content) if scraped_content else ''
+    else:
+      content = '' 
+
     final.append({
-      'hn_id': stories[story]['id'],
+      'hn_id': story,
       'title': stories[story]['title'],
       'url': stories[story]['url'],
       'comment_count': stories[story]['descendants'] if 'descendants' in stories[story] else 0,
-      'content': articles[stories[story]['url']]['content'] if stories[story]['url'] in articles else '',
+      'content': content,
       'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else []
     })
 
