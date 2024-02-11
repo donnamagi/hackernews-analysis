@@ -33,7 +33,7 @@ def call_ollama(content):
   ollama_url = "http://localhost:11434/api/generate"
   data = {
     "model": "llama2",
-    "prompt": f"Summarize this text, remove all noise and tags: {content}",
+    "prompt": f"Summarize this text. Stay precise, remove all noise: {content}",
     "stream": False
   }
   data_json = json.dumps(data)
@@ -89,19 +89,22 @@ for story in stories:
     print(f"Error fetching content: {content.status_code}")
   
   final = []
-  for story in stories:    
+  for story in stories:
+    print(f"Story: {stories[story]}")
+    if 'text' in stories[story]:
+      hn_comment = call_ollama(stories[story]['text'])
+
     if stories[story]['url'] in articles:
       scraped_content = articles[stories[story]['url']]['content']
-      content = call_ollama(scraped_content) if scraped_content else ''
-    else:
-      content = '' 
+      content = call_ollama(scraped_content)
 
     final.append({
       'hn_id': story,
       'title': stories[story]['title'],
       'url': stories[story]['url'],
       'comment_count': stories[story]['descendants'] if 'descendants' in stories[story] else 0,
-      'content': content,
+      'hn_comment': hn_comment if hn_comment else '',
+      'content': content if content else '',
       'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else []
     })
 
