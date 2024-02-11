@@ -68,7 +68,6 @@ articles = dict()
 
 for story in stories:
   url = stories[story]['url']
-  print(f"{stories[story]['title']} - {url}")
   content = requests.get(url)
 
   if content.status_code == 200:
@@ -90,21 +89,23 @@ for story in stories:
   
   final = []
   for story in stories:
-    print(f"Story: {stories[story]}")
-    if 'text' in stories[story]:
-      hn_comment = call_ollama(stories[story]['text'])
 
+    hn_comment = ''
+    if 'text' in stories[story]:
+      hn_comment += call_ollama(stories[story]['text'])
+
+    content = ''
     if stories[story]['url'] in articles:
       scraped_content = articles[stories[story]['url']]['content']
-      content = call_ollama(scraped_content)
+      content += call_ollama(scraped_content)
 
     final.append({
       'hn_id': story,
       'title': stories[story]['title'],
       'url': stories[story]['url'],
       'comment_count': stories[story]['descendants'] if 'descendants' in stories[story] else 0,
-      'hn_comment': hn_comment if hn_comment else '',
-      'content': content if content else '',
+      'hn_comment': hn_comment,
+      'content': content,
       'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else []
     })
 
