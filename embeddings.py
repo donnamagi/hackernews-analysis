@@ -3,6 +3,7 @@ import voyageai
 import re
 from dotenv import load_dotenv
 import os
+import pprint
 
 load_dotenv()
 VOYAGE_KEY = os.getenv("VOYAGE_API_KEY")
@@ -105,12 +106,11 @@ for content in contents:
   }
   chunks.append(chunk_dict)
 
-print(chunks)
+pprint.pprint(chunks)
 
 vo = voyageai.Client(api_key = VOYAGE_KEY)
 
-# pass all strings through the embed now
 text = [chunks[0]['noun_phrases']]
 result = vo.embed(text, model="voyage-2")
 
-print(result.embeddings)
+pprint.pprint(result.embeddings)
