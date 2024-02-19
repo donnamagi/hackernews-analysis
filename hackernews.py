@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-import pprint
 import json
 
 def clean_text(text):
@@ -48,46 +47,57 @@ def call_ollama(content):
     print(f"Request failed with status code: {response.status_code}")
     return None
 
-url = 'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty'
-
-response = requests.get(url)
-if response.status_code == 200:
-  top_stories = response.json()
-else:
-  print(f"Error fetching data: {response.status_code}")
-  exit()
-
-stories = dict()
-
-for story_id in top_stories[:3]:
-  story_url = f'https://hacker-news.firebaseio.com/v0/item/{story_id}.json?print=pretty'
-  story_response = requests.get(story_url)
-  story_details = story_response.json()
-  stories[story_id] = story_details
-
-articles = dict()
-
-for story in stories:
-  url = stories[story]['url']
-  content = requests.get(url)
-
-  if content.status_code == 200:
-    soup = BeautifulSoup(content.text, 'html.parser')
-    title = soup.find('title').get_text() if soup.find('title') else ''
-
-    description = set_description(soup)
-    body = set_body(soup)
-
-    summary = description + clean_text(body)
-    short_summary = summarize_text(summary, 1000)
-
-    articles[url] = {
-      'title': title,
-      'content': summary
-    }
-  else:
-    print(f"Error fetching content: {content.status_code}")
+# Hacker News API 
   
+def get_top_stories():
+  url = 'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty'
+
+  response = requests.get(url)
+  if response.status_code == 200:
+    return response.json()
+  else:
+    print(f"Error fetching data: {response.status_code}")
+
+def get_story_details(story_id):
+  url = f'https://hacker-news.firebaseio.com/v0/item/{story_id}.json?print=pretty'
+
+  response = requests.get(url)
+  if response.status_code == 200:
+    return response.json()
+  else:
+    print(f"Error fetching data: {response.status_code}")
+
+def get_stories(limit=3):
+  stories = dict()
+  top_stories = get_top_stories()
+  for story_id in top_stories[:limit]:
+    stories[story_id] = get_story_details(story_id)
+  return stories
+
+def scrape_content(stories):
+  articles = dict()
+  for story in stories:
+    url = stories[story]['url']
+    content = requests.get(url)
+
+    if content.status_code == 200:
+      soup = BeautifulSoup(content.text, 'html.parser')
+      title = soup.find('title').get_text() if soup.find('title') else ''
+
+      description = set_description(soup)
+      body = set_body(soup)
+
+      summary = description + clean_text(body)
+
+      articles[url] = {
+        'title': title,
+        'content': summary
+      }
+    else:
+      print(f"Error fetching content: {content.status_code}")
+  return articles
+  
+def get_full_dict(articles, stories):
   data = []
   for story in stories:
 
@@ -111,6 +121,10 @@ for story in stories:
       'content': content,
       'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else []
     })
+  return data
 
-with open('data.json', 'w') as f:
-  json.dump(data, f)
+def main():
+  stories = get_stories()
+  articles = scrape_content(stories)
+  data = get_full_dict(articles, stories)
+  return data
