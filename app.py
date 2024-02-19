@@ -7,6 +7,7 @@ import json
 def clean_text(text):
   """Remove extra spaces, newlines, and any script/style elements."""
   text = re.sub('\s+', ' ', text)
+  text = re.sub('\n', ' ', text)
   return text.strip()
 
 def summarize_text(text, max_chars=2000):
@@ -92,12 +93,14 @@ for story in stories:
 
     hn_comment = ''
     if 'text' in stories[story]:
-      hn_comment += call_ollama(stories[story]['text'])
+      llm = call_ollama(stories[story]['text'])
+      hn_comment += clean_text(llm)
 
     content = ''
     if stories[story]['url'] in articles:
       scraped_content = articles[stories[story]['url']]['content']
-      content += call_ollama(scraped_content)
+      llm = call_ollama(scraped_content)
+      content += clean_text(llm)
 
     final.append({
       'hn_id': story,
