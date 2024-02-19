@@ -1,6 +1,11 @@
 import spacy
 import voyageai
 import re
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+VOYAGE_KEY = os.getenv("VOYAGE_API_KEY")
 
 # some sample data
 top_hn = [{'comment_count': 672,
@@ -102,7 +107,7 @@ for content in contents:
 
 print(chunks)
 
-vo = voyageai.Client(api_key="")
+vo = voyageai.Client(api_key = VOYAGE_KEY)
 
 # pass all strings through the embed now
 text = [chunks[0]['noun_phrases']]
