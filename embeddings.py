@@ -1,4 +1,6 @@
 import spacy
+import voyageai
+import re
 
 # some sample data
 top_hn = [{'comment_count': 672,
@@ -12,7 +14,7 @@ top_hn = [{'comment_count': 672,
                   39306049,
                   39308837,
                   39305565],
-  'content': '\n'
+  'content': 
              'The Federal Communications Commission (FCC) has adopted a ruling '
              'that defines calls made with AI-generated voices as "artificial" '
              'under the Telephone Consumer Protection Act (TCPA). This means '
@@ -70,20 +72,40 @@ top_hn = [{'comment_count': 672,
 
 contents = []
 for story in top_hn:
-
   contents.append(story['content'])
 
 # Load the English model
 nlp = spacy.load("en_core_web_sm")
 
+chunks = []
 for content in contents:
   # Process the text
   doc = nlp(content)
 
   # Analyze syntax
-  print("Noun phrases:", [chunk.text for chunk in doc.noun_chunks])
-  print("Verbs:", [token.lemma_ for token in doc if token.pos_ == "VERB"])
+  noun_phrases = [chunk.text for chunk in doc.noun_chunks]
+  verbs = [token.lemma_ for token in doc if token.pos_ == "VERB"]
+  named_entities = [(entity.text, entity.label_) for entity in doc.ents]
 
-  # Find named entities, phrases and concepts
-  for entity in doc.ents:
-      print(entity.text, entity.label_)
+  # Combine the arrays of strings into one string
+  phrases = ' '.join(noun_phrases)
+  phrases = re.sub(r'[()[\]{}<>/!@#$%^&*]', '', phrases)
+  verbs = ' '.join(verbs)
+  entities = ' '.join(entity[0] for entity in named_entities)
+
+  chunk_dict = {
+    'noun_phrases': phrases,
+    'verbs': verbs,
+    'named_entities': entities
+  }
+  chunks.append(chunk_dict)
+
+print(chunks)
+
+vo = voyageai.Client(api_key="")
+
+# pass all strings through the embed now
+text = [chunks[0]['noun_phrases']]
+result = vo.embed(text, model="voyage-2")
+
+print(result.embeddings)
