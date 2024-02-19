@@ -11,9 +11,9 @@ client = MilvusClient(
     token=TOKEN 
 )
 
-def insert(collection_name, data):
+def insert(data):
   res = client.insert(
-    collection_name=collection_name,
+    collection_name= 'Newsletter',
     data=data
   )
   return res
@@ -27,9 +27,9 @@ def insert(collection_name, data):
   #   "vector_hn": result.embeddings[0]
   # }
 
-def batch_insert(collection_name, data):
+def batch_insert(data):
   res = client.insert(
-    collection_name=collection_name,
+    collection_name= 'Newsletter',
     data=data
   )
   return res

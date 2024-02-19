@@ -88,7 +88,7 @@ for story in stories:
   else:
     print(f"Error fetching content: {content.status_code}")
   
-  final = []
+  data = []
   for story in stories:
 
     hn_comment = ''
@@ -102,7 +102,7 @@ for story in stories:
       llm = call_ollama(scraped_content)
       content += clean_text(llm)
 
-    final.append({
+    data.append({
       'hn_id': story,
       'title': stories[story]['title'],
       'url': stories[story]['url'],
@@ -112,4 +112,5 @@ for story in stories:
       'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else []
     })
 
-pprint.pprint(final)
+with open('data.json', 'w') as f:
+  json.dump(data, f)
