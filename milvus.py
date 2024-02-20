@@ -44,7 +44,7 @@ def batch_insert(data):
 def search_vector(vector, lim=5):
   res = client.search(
     collection_name= 'Newsletter',
-    data=[vector],
+    data=[vector], # [0.1, 0.2, ...], [0.3, 0.4, ...] etc for bulk search
     output_fields=['hn_id', 'content', 'date'],
     limit=lim
   )
@@ -53,8 +53,15 @@ def search_vector(vector, lim=5):
 def search_query(query, lim=5):
   res = client.query(
     collection_name= 'Newsletter',
-    filter=query,
+    filter=query, # ''
     output_fields=['hn_id', 'content', 'date'],
     limit=lim
   )
-  return res[0]
+  return res
+
+def search_get(ids):
+  res = client.get(
+    collection_name= 'Newsletter',
+    ids=ids #[1, 2, 3, ...]
+  )
+  return res
