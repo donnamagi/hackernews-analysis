@@ -1,51 +1,5 @@
 import requests
-from bs4 import BeautifulSoup
-import re
-import json
-
-def clean_text(text):
-  """Remove extra spaces, newlines, and any script/style elements."""
-  text = re.sub('\s+', ' ', text)
-  text = re.sub('\n', ' ', text)
-  return text.strip()
-
-def summarize_text(text, max_chars=2000):
-  """Summarize the text to the first N characters."""
-  return text[:max_chars]
-
-def set_description(soup : BeautifulSoup):
-  description = ''
-  meta_description = soup.find('meta', attrs={'name': 'description'})
-  og_description = soup.find('meta', attrs={'property': 'og:description'})
-  if meta_description:
-    description = meta_description.get('content', '')
-  elif og_description:
-    description = og_description.get('content', '')
-  
-  return description
-
-def set_body(soup : BeautifulSoup):
-  paragraphs = [p.get_text().strip() for p in soup.find_all('p')]
-  paragraph_text = ' '.join(paragraphs)
-  return paragraph_text[:2000]
-
-def call_ollama(content):
-  ollama_url = "http://localhost:11434/api/generate"
-  data = {
-    "model": "llama2",
-    "prompt": f"Summarize this text. Stay precise, remove all noise: {content}",
-    "stream": False
-  }
-  data_json = json.dumps(data)
-
-  response = requests.post(ollama_url, data=data_json, headers={"Content-Type": "application/json"})
-
-  if response.status_code == 200:
-    data = response.json()
-    return data['response']
-  else:
-    print(f"Request failed with status code: {response.status_code}")
-    return None
+import datetime
 
 # Hacker News API 
   
@@ -74,43 +28,13 @@ def get_stories(limit=3):
     stories[story_id] = get_story_details(story_id)
   return stories
 
-def scrape_content(stories):
-  articles = dict()
-  for story in stories:
-    url = stories[story]['url']
-    content = requests.get(url)
-
-    if content.status_code == 200:
-      soup = BeautifulSoup(content.text, 'html.parser')
-      title = soup.find('title').get_text() if soup.find('title') else ''
-
-      description = set_description(soup)
-      body = set_body(soup)
-
-      summary = description + clean_text(body)
-
-      articles[url] = {
-        'title': title,
-        'content': summary
-      }
-    else:
-      print(f"Error fetching content: {content.status_code}")
-  return articles
-  
-def get_full_dict(articles, stories):
+def get_full_dict(stories):
   data = []
   for story in stories:
 
     hn_comment = ''
     if 'text' in stories[story]:
-      llm = call_ollama(stories[story]['text'])
-      hn_comment += clean_text(llm)
-
-    content = ''
-    if stories[story]['url'] in articles:
-      scraped_content = articles[stories[story]['url']]['content']
-      llm = call_ollama(scraped_content)
-      content += clean_text(llm)
+      hn_comment += stories[story]['text']
 
     data.append({
       'hn_id': story,
@@ -118,13 +42,14 @@ def get_full_dict(articles, stories):
       'url': stories[story]['url'],
       'comment_count': stories[story]['descendants'] if 'descendants' in stories[story] else 0,
       'hn_comment': hn_comment,
-      'content': content,
-      'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else []
+      'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else [],
+      'date': datetime.datetime.now().isoformat()
     })
   return data
 
 def main():
   stories = get_stories()
-  articles = scrape_content(stories)
-  data = get_full_dict(articles, stories)
+  data = get_full_dict(stories)
   return data
+
+main()
