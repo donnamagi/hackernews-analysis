@@ -40,3 +40,21 @@ def batch_insert(data):
 #   { ... },
 #   { ... }
 # ]
+
+def search_vector(vector, lim=5):
+  res = client.search(
+    collection_name= 'Newsletter',
+    data=[vector],
+    output_fields=['hn_id', 'content', 'date'],
+    limit=lim
+  )
+  return res[0]
+
+def search_query(query, lim=5):
+  res = client.query(
+    collection_name= 'Newsletter',
+    filter=query,
+    output_fields=['hn_id', 'content', 'date'],
+    limit=lim
+  )
+  return res[0]

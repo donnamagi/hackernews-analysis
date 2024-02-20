@@ -4,7 +4,7 @@ import datetime
 # Hacker News API 
   
 def get_top_stories():
-  url = 'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty'
+  url = 'https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty'
 
   response = requests.get(url)
   if response.status_code == 200:
