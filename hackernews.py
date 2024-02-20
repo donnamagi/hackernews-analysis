@@ -21,7 +21,7 @@ def get_story_details(story_id):
   else:
     print(f"Error fetching data: {response.status_code}")
 
-def get_stories(limit=3):
+def get_stories(limit=10):
   stories = dict()
   top_stories = get_top_stories()
   for story_id in top_stories[:limit]:
@@ -31,19 +31,13 @@ def get_stories(limit=3):
 def get_full_dict(stories):
   data = []
   for story in stories:
-
-    hn_comment = ''
-    if 'text' in stories[story]:
-      hn_comment += stories[story]['text']
-
     data.append({
       'hn_id': story,
       'title': stories[story]['title'],
       'url': stories[story]['url'],
-      'comment_count': stories[story]['descendants'] if 'descendants' in stories[story] else 0,
-      'hn_comment': hn_comment,
+      'hn_comment': stories[story]['text'] if 'text' in stories[story] else '',
       'comment_ids': stories[story]['kids'] if 'kids' in stories[story] else [],
-      'date': datetime.datetime.now().isoformat()
+      'date': datetime.datetime.now().strftime('%d-%m-%Y'),
     })
   return data
 
@@ -51,5 +45,3 @@ def main():
   stories = get_stories()
   data = get_full_dict(stories)
   return data
-
-main()
