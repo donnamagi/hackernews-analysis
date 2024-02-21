@@ -45,7 +45,7 @@ def search_vector(vector, lim=5):
   res = client.search(
     collection_name= 'Newsletter',
     data=[vector], # [0.1, 0.2, ...], [0.3, 0.4, ...] etc for bulk search
-    output_fields=['hn_id', 'content', 'date'],
+    output_fields=['hn_id', 'title','content', 'date'],
     limit=lim
   )
   return res[0]
