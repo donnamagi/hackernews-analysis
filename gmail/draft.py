@@ -3,10 +3,19 @@ from email.message import EmailMessage
 from auth import get_creds
 import base64
 
+def set_content(title, text_1, text_2, text_3):
+  with open("gmail/template.html", 'r') as file:
+    email_template = file.read()
 
-def gmail_create_draft(to, subject, content = None):
+  email_content = email_template.replace("{{title}}", title) \
+                                .replace("{{text_1}}", text_1) \
+                                .replace("{{text_2}}", text_2) \
+                                .replace("{{text_3}}", text_3)
+  
+  return email_content
+
+def gmail_create_draft(to, subject, content):
   creds = get_creds()
-  content = "<h1>Message body in <i>html</i> format!</h1>" 
 
   # https://stackoverflow.com/a/73480540
   with build('gmail', 'v1', credentials=creds) as service:
@@ -37,4 +46,5 @@ def gmail_create_draft(to, subject, content = None):
 
 
 if __name__ == "__main__":
-  gmail_create_draft()
+  content = set_content("Hello, World!", "This is the first paragraph.", "This is the second paragraph.", "This is the third paragraph.")
+  gmail_create_draft(content=content, to="magi.donna@gmail.com", subject="Hello, World!")
