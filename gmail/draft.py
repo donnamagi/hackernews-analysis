@@ -1,51 +1,37 @@
-import base64
+from googleapiclient.discovery import build
 from email.message import EmailMessage
 from auth import get_creds
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+import base64
 
 
-def gmail_create_draft():
-  """Create and insert a draft email.
-   Print the returned draft's message and id.
-   Returns: Draft object, including draft id and message meta data.
-
-  Load pre-authorized user credentials from the environment.
-  TODO(developer) - See https://developers.google.com/identity
-  for guides on implementing OAuth2 for the application.
-  """
-
+def gmail_create_draft(to, subject, content = None):
   creds = get_creds()
+  content = "<h1>Message body in <i>html</i> format!</h1>" 
 
-  try:
-    # create gmail api client
-    service = build("gmail", "v1", credentials=creds)
-
+  # https://stackoverflow.com/a/73480540
+  with build('gmail', 'v1', credentials=creds) as service:
     message = EmailMessage()
 
-    message.set_content("This is automated draft mail")
-
-    message["To"] = "gduser1@workspacesamples.dev"
+    message["To"] = to
     message["From"] = "magi.donna@gmail.com"
-    message["Subject"] = "Automated draft"
+    message["Subject"] = subject
+    message.add_header('Content-Type','text/html')
+    message.set_payload(content)
 
     # encoded message
     encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
-    create_message = {"message": {"raw": encoded_message}}
-    # pylint: disable=E1101
-    draft = (
-        service.users()
-        .drafts()
-        .create(userId="me", body=create_message)
-        .execute()
-    )
-
-    print(f'Draft id: {draft["id"]}\nDraft message: {draft["message"]}')
-
-  except HttpError as error:
-    print(f"An error occurred: {error}")
-    draft = None
+    try: 
+      draft = (
+          service.users().drafts().create(
+            userId="me", 
+            body={"message": { "raw": encoded_message }}
+          ).execute()
+      )
+      print(f'\nDraft id: {draft["id"]}\nDraft message: {draft["message"]}\n')
+    except Exception as e:
+        print('Error:', e)
+        draft = None
 
   return draft
 
