@@ -6,8 +6,16 @@ directory="$HOME/documents/projects/semantic/top_hn"
 file_name="$(date "+%d-%m-%Y").json"
 
 if [ ! -f "${directory}/${file_name}" ]; then
-  # Use curl to send the GET request and save the response
-  curl -s "$url" > "${directory}/${file_name}"
+  # body + status code
+  http_status=$(curl -s -o "${directory}/${file_name}" -w "%{http_code}" "$url")
+
+  if [ "$http_status" -eq 200 ]; then
+    echo "success"
+  else
+    # removing empty file
+    rm -f "${directory}/${file_name}"
+    echo "error"
+  fi
 else
   echo "File for today already exists."
 fi
