@@ -1,7 +1,17 @@
 from googleapiclient.discovery import build
 from email.message import EmailMessage
-from auth import get_creds
+from gmail.auth import get_creds
 import base64
+
+from embeddings import get_embedding
+from milvus import search_vector
+
+KEYWORDS = ['artificial intelligence', 'education', 'biotech', 'health']
+def search(keywords):
+  vectors = []
+  for keyword in keywords:
+    vectors.append(get_embedding(keyword))
+  return search_vector(vectors, 3)
 
 def set_content(title, text_1, text_2, text_3):
   with open("gmail/template.html", 'r') as file:
@@ -13,6 +23,7 @@ def set_content(title, text_1, text_2, text_3):
                                 .replace("{{text_3}}", text_3)
   
   return email_content
+
 
 def gmail_create_draft(to, subject, content):
   creds = get_creds()
@@ -46,5 +57,6 @@ def gmail_create_draft(to, subject, content):
 
 
 if __name__ == "__main__":
-  content = set_content("Hello, World!", "This is the first paragraph.", "This is the second paragraph.", "This is the third paragraph.")
+  matches = search(KEYWORDS)
+  content = set_content("Hello, World!", matches[0]['entity']['content'], matches[1]['entity']['content'], matches[2]['entity']['content'])
   gmail_create_draft(content=content, to="magi.donna@gmail.com", subject="Hello, World!")

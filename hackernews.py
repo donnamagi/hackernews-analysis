@@ -21,7 +21,7 @@ def get_story_details(story_id):
   else:
     print(f"Error fetching data: {response.status_code}")
 
-def get_stories(limit=10):
+def get_stories(limit=20):
   stories = dict()
   top_stories = get_top_stories()
   for story_id in top_stories[:limit]:
