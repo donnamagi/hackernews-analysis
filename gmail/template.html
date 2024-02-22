@@ -5,6 +5,7 @@
       .email-container {
         padding: 20px;
         font-family: Arial, sans-serif;
+        font-size: 1.2em;
         background-color: rgba(244, 244, 244, 0.4);
         max-width: 600px;
         margin: auto;
@@ -14,25 +15,28 @@
         padding-bottom: 15px;
         margin-bottom: 10px;
       }
+      h1 {
+        font-size: 2em;
+        margin-bottom: 0px;
+        text-align: center;
+      }
+      span, a {
+        font-size: 1em;
+        color: #000;
+      }
     </style>
   </head>
   <body>
     <div class="email-container">
-      <h1 style="text-align: center;">{{title}}</h1>
+      <h1>{{title}}</h1>
       <div class="subsection">
-        <p>
-          {{text_1}}
-        </p>
+        {{text_1}}
       </div>
       <div class="subsection">
-        <p>
-          {{text_2}}
-        </p>
+        {{text_2}}
       </div>
       <div class="subsection">
-        <p>
-          {{text_3}}
-        </p>
+        {{text_3}}
       </div>
     </div>
   </body>

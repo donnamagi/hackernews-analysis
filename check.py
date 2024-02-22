@@ -4,7 +4,7 @@ import pprint
 
 def search(input):
   vector = get_embedding(input)
-  return search_vector(vector, 2)
+  return search_vector(vectors=[vector])
 
 def main():
   user_input = input("Enter a search query: ")

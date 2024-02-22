@@ -11,7 +11,7 @@ def search(keywords):
   vectors = []
   for keyword in keywords:
     vectors.append(get_embedding(keyword))
-  return search_vector(vectors, 3)
+  return search_vector(vectors)
 
 def set_content(title, text_1, text_2, text_3):
   with open("gmail/template.html", 'r') as file:
@@ -55,8 +55,15 @@ def gmail_create_draft(to, subject, content):
 
   return draft
 
-
+def template(match):
+  return f"""
+  <h2>{match['entity']['title']}</h2>
+  <p>{match['entity']['content']}</p>
+  <span>{match['entity']['date']} </span> |
+  <a href="{match['entity']['url']}">Read more</a> | <a href="https://news.ycombinator.com/item?id={match['entity']['hn_id']}">Check comments</a>
+  """
 if __name__ == "__main__":
   matches = search(KEYWORDS)
-  content = set_content("Hello, World!", matches[0]['entity']['content'], matches[1]['entity']['content'], matches[2]['entity']['content'])
-  gmail_create_draft(content=content, to="magi.donna@gmail.com", subject="Hello, World!")
+
+  content = set_content("Hello World", template(matches[0]), template(matches[1]), template(matches[2]))
+  gmail_create_draft(content=content, to="magi.donna@gmail.com", subject="Your HN update")

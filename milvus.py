@@ -6,6 +6,9 @@ load_dotenv()
 CLUSTER_ENDPOINT = os.getenv("MILVUS_CLUSTER_ENDPOINT")
 TOKEN = os.getenv("MILVUS_API_KEY")
 
+RES_LIMIT = 5
+OUTPUT_FIELDS = ['hn_id', 'title', 'content', 'date', 'url']
+
 client = MilvusClient(
     uri=CLUSTER_ENDPOINT,
     token=TOKEN 
@@ -41,22 +44,22 @@ def batch_insert(data):
 #   { ... }
 # ]
 
-def search_vector(vectors, lim=5):
+def search_vector(vectors):
   res = client.search(
     collection_name= 'Newsletter',
     data=vectors, # [0.1, 0.2, ...], [0.3, 0.4, ...] etc for bulk search
     filter="content != ''",
-    output_fields=['hn_id', 'title','content', 'date'],
-    limit=lim
+    output_fields=OUTPUT_FIELDS,
+    limit=RES_LIMIT
   )
   return res[0]
 
-def search_query(query, lim=5):
+def search_query(query):
   res = client.query(
     collection_name= 'Newsletter',
     filter=query, # ''
-    output_fields=['hn_id', 'content', 'date'],
-    limit=lim
+    output_fields=OUTPUT_FIELDS,
+    limit=RES_LIMIT
   )
   return res
 
