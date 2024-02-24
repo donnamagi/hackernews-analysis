@@ -12,7 +12,7 @@ def get_top_stories():
   else:
     print(f"Error fetching data: {response.status_code}")
 
-def get_story_details(story_id):
+def get_hn_story(story_id):
   url = f'https://hacker-news.firebaseio.com/v0/item/{story_id}.json?print=pretty'
 
   response = requests.get(url)
@@ -25,7 +25,7 @@ def get_stories(limit=20):
   stories = dict()
   top_stories = get_top_stories()
   for story_id in top_stories[:limit]:
-    stories[story_id] = get_story_details(story_id)
+    stories[story_id] = get_hn_story(story_id)
   return stories
 
 def get_full_dict(stories):

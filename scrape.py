@@ -35,8 +35,6 @@ def scrape_content(url):
     body = set_body(soup)
     summary = description + clean_text(body)
 
-    # call ollama to summarize the content
-    summary = call_ollama(summary) if len(summary) > 0 else ''
     return summary
   else:
     print(f"Error fetching content: {content.status_code}")
@@ -45,7 +43,7 @@ def call_ollama(content):
   ollama_url = "http://localhost:11434/api/generate"
   data = {
     "model": "llama2",
-    "prompt": f"Summarize this text. Stay succinct, remove all noise: {content}",
+    "prompt": f"Summarize the text in 2-3 sentences. Be precise, no introduction needed: {content}",
     "stream": False
   }
   data_json = json.dumps(data)

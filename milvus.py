@@ -44,22 +44,22 @@ def batch_insert(data):
 #   { ... }
 # ]
 
-def search_vector(vectors):
+def search_vector(vectors, fields = OUTPUT_FIELDS, limit=RES_LIMIT):
   res = client.search(
     collection_name= 'Newsletter',
     data=vectors, # [0.1, 0.2, ...], [0.3, 0.4, ...] etc for bulk search
     filter="content != ''",
-    output_fields=OUTPUT_FIELDS,
-    limit=RES_LIMIT
+    output_fields= fields,
+    limit=limit
   )
   return res[0]
 
-def search_query(query):
+def search_query(query, fields = OUTPUT_FIELDS, limit=RES_LIMIT):
   res = client.query(
     collection_name= 'Newsletter',
     filter=query, # ''
-    output_fields=OUTPUT_FIELDS,
-    limit=RES_LIMIT
+    output_fields= fields,
+    limit=limit
   )
   return res
 
