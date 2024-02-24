@@ -1,19 +1,37 @@
+import spacy
 import requests
 import json
+
+# Load the English model for named entity recognition
+nlp = spacy.load("en_core_web_sm")
 
 def get_keywords(summary):
   keywords = call_ollama(summary)
   keywords = clean_keywords(keywords)
   return keywords
 
+def get_orgs(content):
+  orgs = set()
+  doc = nlp(content)
+  named_entities = [(entity.text, entity.label_) for entity in doc.ents]
+  for entity, label in named_entities:
+    if label == 'ORG':
+      orgs.add(entity)
+
+  return list(orgs) if len(orgs) > 1 else None
+
 def call_ollama(content):
   ollama_url = "http://localhost:11434/api/generate"
   data = {
     "model": "llama2",
-    "prompt": f"""Generate 5 relevant keywords for an article. Answer only with the keywords!
-    Do not make them too specific (e.g. 'Consumer protection' instead of 'Telephone Consumer Protection Act (TCPA)')
-    This is the article's summary: {content}. 
-    """,
+    "prompt": 
+      f""" 
+      Generate 3-5 relevant keywords for an article's topic. Answer ONLY with a list of keywords. Example: [str, str, ...]
+      Make them general. For example:
+      Bad response: ["HTML microframework", "modular web user interfaces", "vanilla HTML code", "page fragments", "content replacement"]
+      Good response: ["code minimalism", "microframeworks", "vanilla HTML", "modular interfaces"]
+      This is the article's summary: {content}.
+      """,
     "stream": False
   }
   data_json = json.dumps(data)
@@ -27,6 +45,9 @@ def call_ollama(content):
     return None
 
 def clean_keywords(input_string):
+  if input_string.startswith('['):
+    return json.loads(input_string)
+  
   lines = input_string.split('\n')
 
   # Remove empty lines and intro sentence
