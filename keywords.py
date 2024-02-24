@@ -18,7 +18,7 @@ def get_orgs(content):
     if label == 'ORG':
       orgs.add(entity)
 
-  return list(orgs) if len(orgs) > 1 else None
+  return list(orgs)
 
 def call_ollama(content):
   ollama_url = "http://localhost:11434/api/generate"
@@ -26,10 +26,10 @@ def call_ollama(content):
     "model": "llama2",
     "prompt": 
       f""" 
-      Generate 3-5 relevant keywords for an article's topic. Answer ONLY with a list of keywords. Example: [str, str, ...]
-      Make them general. For example:
-      Bad response: ["HTML microframework", "modular web user interfaces", "vanilla HTML code", "page fragments", "content replacement"]
-      Good response: ["code minimalism", "microframeworks", "vanilla HTML", "modular interfaces"]
+      Generate 3-5 relevant keywords for an article's general topic. Avoid repetition. Answer ONLY with a list of keywords. Example: [str, str, ...]
+      For example:
+      Bad keyword formatting: ["HTML microframework", "modular web user interfaces", "vanilla HTML code", "page fragments", "content replacement"]
+      Good keyword formatting: ["code minimalism", "microframeworks", "vanilla HTML", "modular interfaces"]
       This is the article's summary: {content}.
       """,
     "stream": False
@@ -46,7 +46,8 @@ def call_ollama(content):
 
 def clean_keywords(input_string):
   if input_string.startswith('['):
-    return json.loads(input_string)
+    list = json.loads(input_string)
+    return set(list) 
   
   lines = input_string.split('\n')
 
@@ -55,6 +56,6 @@ def clean_keywords(input_string):
   cleaned_keywords = cleaned_lines[1:]
 
   # Remove the numbering
-  cleaned_keywords = [line.split('. ')[1] for line in cleaned_keywords]
+  cleaned_keywords = set(line.split('. ')[1] for line in cleaned_keywords)
 
-  return cleaned_keywords # [str, str, ...]
+  return cleaned_keywords # {str, str, ...}

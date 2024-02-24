@@ -3,8 +3,8 @@ import json
 from milvus import search_query, insert
 from hackernews import get_hn_story
 from scrape import scrape_content, call_ollama, clean_text
+from keywords import get_keywords, get_orgs
 from embeddings import get_embedding
-from keywords import get_keywords
 
 def main():
   collection = get_collection_ids()
@@ -26,11 +26,18 @@ def process_entry(id, date):
   
   if content is None:
     content = scrape_content(url)
-  content = summarize_content(content)
-  keywords = get_keywords(content) if content else []
-  print(f"Keywords: {keywords}")
-  return
-  vector = get_embedding(content) if content else get_embedding(title)
+
+  if content:
+    content = summarize_content(content)
+    vector = get_embedding(content)
+
+    keywords = get_keywords(content) # ollama
+    orgs = get_orgs(content) # spacy
+    keywords = list(keywords.union(orgs)) # merge sets using union
+    print(f"Keywords: {keywords}")
+  else:
+    vector = get_embedding(title)
+    keywords = []
 
   return add_to_collection(
     id=id,
@@ -91,22 +98,15 @@ def get_json_ids():
   ids_per_date = dict()
   json_files = [file for file in os.listdir('top_hn') if file.endswith('.json')]
 
-  # for file in json_files:
-  #   file_path = os.path.join('top_hn', file)
-  #   with open(file_path, 'r') as f:
-  #     data = json.load(f)
-  #     date = file.split('.')[0]
-  #     json_ids = data[:20]
-  #     ids_per_date[date] = json_ids
-  file_path = os.path.join('top_hn', json_files[0])
-  with open(file_path, 'r') as f:
-    data = json.load(f)
-    date = json_files[0].split('.')[0]
-    json_ids = data[:10]
-    ids_per_date[date] = json_ids
+  for file in json_files:
+    file_path = os.path.join('top_hn', file)
+    with open(file_path, 'r') as f:
+      data = json.load(f)
+      date = file.split('.')[0]
+      json_ids = data[:20]
+      ids_per_date[date] = json_ids
 
   return ids_per_date
 
 if __name__ == "__main__":
   main()
-  
