@@ -17,6 +17,7 @@ def process_collection(collection, ids, date):
   for id in ids:
     if id not in collection:
       process_entry(id, date)
+      collection.add(id)
     else:
       print(f"{id} already in collection.")
 

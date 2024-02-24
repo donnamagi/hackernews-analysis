@@ -33,7 +33,7 @@ def call_ollama(content):
       """,
     "stream": False
   }
-  
+
   data_json = json.dumps(data)
   response = requests.post(ollama_url, data=data_json, headers={"Content-Type": "application/json"})
 
@@ -61,5 +61,4 @@ def clean_keywords(input_string):
   except:
     cleaned_keywords = set(cleaned_keywords)
 
-  print(cleaned_keywords)
   return cleaned_keywords # {str, str, ...}
