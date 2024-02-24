@@ -4,6 +4,7 @@ from milvus import search_query, insert
 from hackernews import get_hn_story
 from scrape import scrape_content, call_ollama, clean_text
 from embeddings import get_embedding
+from keywords import get_keywords
 
 def main():
   collection = get_collection_ids()
@@ -26,12 +27,16 @@ def process_entry(id, date):
   if content is None:
     content = scrape_content(url)
   content = summarize_content(content)
+  keywords = get_keywords(content) if content else []
+  print(f"Keywords: {keywords}")
+  return
   vector = get_embedding(content) if content else get_embedding(title)
 
   return add_to_collection(
     id=id,
-    vector=vector,
     title=title,
+    keywords=keywords,
+    vector=vector,
     url=url,
     content=content,
     comments=comments,
@@ -104,3 +109,4 @@ def get_json_ids():
 
 if __name__ == "__main__":
   main()
+  

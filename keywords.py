@@ -1,7 +1,10 @@
 import requests
 import json
-import pprint
-from milvus import search_query
+
+def get_keywords(summary):
+  keywords = call_ollama(summary)
+  keywords = clean_keywords(keywords)
+  return keywords
 
 def call_ollama(content):
   ollama_url = "http://localhost:11434/api/generate"
@@ -22,10 +25,6 @@ def call_ollama(content):
   else:
     print(f"Request failed with status code: {response.status_code}")
     return None
-  
-def get_keywords(summary):
-  keywords = call_ollama(summary)
-  return keywords
 
 def clean_keywords(input_string):
   lines = input_string.split('\n')
@@ -38,21 +37,3 @@ def clean_keywords(input_string):
   cleaned_keywords = [line.split('. ')[1] for line in cleaned_keywords]
 
   return cleaned_keywords # [str, str, ...]
-
-def main():
-  keys = list()
-  data = search_query('url like "https://github%"')
-  for story in data:
-    content = story['entity']['content'] 
-    if content != '':
-      llm_keywords = get_keywords(content)
-      keyword_list = clean_keywords(llm_keywords)
-      keys.append({
-        'hn_id': story['entity']['hn_id'], 
-        'keywords': keyword_list, 
-        'date': story['entity']['date']
-      })
-  pprint.pprint(keys)
-  return keys
-
-main()
