@@ -21,28 +21,12 @@ def insert(data):
   )
   return res
 
-  # data={
-  #   "hn_id": 39304736,
-  #   "comment_ids": [],
-  #   "title": "FCC rules AI-generated voices in robocalls illegal",
-  #   "url": "https://www.fcc.gov/document/fcc-makes-ai-generated-voices-robocalls-illegal",
-  #   "content": "The Federal Communications Commission (FCC) has adopted a ruling that defines calls made with AI-generated voices as 'artificial' under the Telephone Consumer Protection Act (TCPA). This means that such calls are subject to the act's restrictions on telemarketing and automated calls.",
-  #   "vector": result.embeddings[0]
-  #   "hn_comment": "",
-  #   "date": "11-10-2021",
-  # }
-
-def batch_insert(data):
-  res = client.insert(
+def delete(ids):
+  res = client.delete(
     collection_name= 'Newsletter',
-    data=data
+    pks=ids 
   )
   return res
-
-# data = [
-#   { ... },
-#   { ... }
-# ]
 
 def search_vector(vectors, fields = OUTPUT_FIELDS, limit=RES_LIMIT):
   res = client.search(

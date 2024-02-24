@@ -1,7 +1,7 @@
 from hackernews import main as get_hn_data
 from scrape import main as scrape_content
 from embeddings import get_embedding
-from milvus import batch_insert
+from milvus import insert
 
 data = get_hn_data()
 for story in data:
@@ -16,4 +16,4 @@ for story in data:
     story['content'] = ''
     story['vector'] = get_embedding([story['title']])
 
-batch_insert(data)
+insert(data)
