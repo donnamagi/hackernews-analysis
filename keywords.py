@@ -26,14 +26,14 @@ def call_ollama(content):
     "model": "llama2",
     "prompt": 
       f""" 
-      Generate 3-5 relevant keywords for an article's general topic. Avoid repetition. Answer ONLY with a list of keywords. Example: [str, str, ...]
-      For example:
-      Bad keyword formatting: ["HTML microframework", "modular web user interfaces", "vanilla HTML code", "page fragments", "content replacement"]
-      Good keyword formatting: ["code minimalism", "microframeworks", "vanilla HTML", "modular interfaces"]
+      Generate 3-5 relevant keywords for an article's general topic. What areas of interest does the article cover?
+      Avoid repetition, and keep the keywords general. Use plural case if necessary.
       This is the article's summary: {content}.
+      Answer ONLY with the keywords. Every keyword should be 1-2 words only.
       """,
     "stream": False
   }
+  
   data_json = json.dumps(data)
   response = requests.post(ollama_url, data=data_json, headers={"Content-Type": "application/json"})
 
@@ -55,7 +55,11 @@ def clean_keywords(input_string):
   cleaned_lines = [line.strip() for line in lines if line.strip() != '']
   cleaned_keywords = cleaned_lines[1:]
 
-  # Remove the numbering
-  cleaned_keywords = set(line.split('. ')[1] for line in cleaned_keywords)
+  # remove the numbering, in case it's there
+  try: 
+    cleaned_keywords = set(line.split('. ')[1] for line in cleaned_keywords)
+  except:
+    cleaned_keywords = set(cleaned_keywords)
 
+  print(cleaned_keywords)
   return cleaned_keywords # {str, str, ...}
