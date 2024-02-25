@@ -1,6 +1,7 @@
 import spacy
 import requests
 import json
+import re
 
 # Load the English model for named entity recognition
 nlp = spacy.load("en_core_web_sm")
@@ -45,20 +46,19 @@ def call_ollama(content):
     return None
 
 def clean_keywords(input_string):
-  if input_string.startswith('['):
+  if input_string.startswith('[').endswith(']'):
     list = json.loads(input_string)
     return set(list) 
-  
-  lines = input_string.split('\n')
 
-  # Remove empty lines and intro sentence
-  cleaned_lines = [line.strip() for line in lines if line.strip() != '']
-  cleaned_keywords = cleaned_lines[1:]
-
-  # remove the numbering, in case it's there
   try: 
-    cleaned_keywords = set(line.split('. ')[1] for line in cleaned_keywords)
-  except:
-    cleaned_keywords = set(cleaned_keywords)
+    lines = input_string.split('\n')
 
-  return cleaned_keywords # {str, str, ...}
+    # Remove empty lines and intro sentence
+    cleaned_lines = [line.strip() for line in lines if line.strip() != '']
+    cleaned_keywords = cleaned_lines[1:]
+
+    # remove chars and numbers
+    cleaned_keywords = set(re.sub(r'[0-9.*]', '', line) for line in cleaned_keywords)
+    return cleaned_keywords # {str, str, ...}
+  except:
+    return ValueError(f"Can't parse: \n\n {input_string}")
