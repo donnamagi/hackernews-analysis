@@ -54,7 +54,7 @@ def process_entry(id, date):
 def get_data_from_hn(id):
   story = get_hn_story(id)
   title = story['title']
-  url = story['url']
+  url = story['url'] if 'url' in story else None
   content = story['text'] if 'text' in story else None
   comments = story['kids'] if 'kids' in story else []
   return title, url, content, comments
@@ -104,7 +104,7 @@ def get_json_ids():
     with open(file_path, 'r') as f:
       data = json.load(f)
       date = file.split('.')[0]
-      json_ids = data[:20]
+      json_ids = data[:30]
       ids_per_date[date] = json_ids
 
   return ids_per_date

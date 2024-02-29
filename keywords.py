@@ -46,7 +46,7 @@ def call_ollama(content):
     return None
 
 def clean_keywords(input_string):
-  if input_string.startswith('[').endswith(']'):
+  if input_string.startswith('['):
     list = json.loads(input_string)
     return set(list) 
 
@@ -58,7 +58,7 @@ def clean_keywords(input_string):
     cleaned_keywords = cleaned_lines[1:]
 
     # remove chars and numbers
-    cleaned_keywords = set(re.sub(r'[0-9.*]', '', line) for line in cleaned_keywords)
+    cleaned_keywords = set(re.sub(r'[0-9.*]', '', line).strip() for line in cleaned_keywords)
     return cleaned_keywords # {str, str, ...}
   except:
     return ValueError(f"Can't parse: \n\n {input_string}")
