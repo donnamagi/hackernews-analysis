@@ -5,6 +5,7 @@ from hackernews import get_hn_story
 from scrape import scrape_content, call_ollama, clean_text
 from keywords import get_keywords, get_orgs
 from embeddings import get_embedding
+import pandas as pd
 
 def main():
   collection = get_collection_ids()
@@ -30,16 +31,28 @@ def process_entry(id, date):
 
   if content:
     content = summarize_content(content)
-    vector = get_embedding(content)
+    # verify if the embedding is in vectors.csv
+    vectors_df = pd.read_csv('vectors_06-03-2024.csv')
+    if id in vectors_df['id']:
+      print("vector already created")
+      vector = vectors_df[vectors_df['id'] == id]['vector'].values[0]
+    else:
+      print("Content not found in vectors.csv")
+      vector = get_embedding(content)
 
     keywords = get_keywords(content) # ollama
     orgs = get_orgs(content) # spacy
     keywords = list(keywords.union(orgs)) # merge sets using union
+    # turn keywords into a string
+    # make all "" into '' in the list
+    keywords = json.dumps(list(keywords))
+    keywords = keywords.replace('"', "'")
+    # verify type of keywords
     print(f"Keywords: {keywords}")
   else:
     vector = get_embedding(title)
-    keywords = []
-
+    # should add some logic to derive content from comments
+    keywords = ''
   return add_to_collection(
     id=id,
     title=title,
@@ -66,7 +79,7 @@ def summarize_content(content):
     return content
   return None # can't scrape, no HN comment
 
-def add_to_collection(id: int, vector: list, title: str, url: str, content: str, comments: list, date: str, keywords: list):
+def add_to_collection(id: int, vector: list, title: str, url: str, content: str, comments: list, date: str, keywords: str):
   data = {
     "id": id,
     "title": title,
