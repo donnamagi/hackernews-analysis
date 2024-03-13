@@ -30,29 +30,34 @@ def process_entry(id, date):
     content = scrape_content(url)
 
   if content:
-    content = summarize_content(content)
-    # verify if the embedding is in vectors.csv
-    vectors_df = pd.read_csv('vectors_06-03-2024.csv')
-    if id in vectors_df['id']:
-      print("vector already created")
-      vector = vectors_df[vectors_df['id'] == id]['vector'].values[0]
-    else:
-      print("Content not found in vectors.csv")
-      vector = get_embedding(content)
+    # content = summarize_content(content)
+    # # verify if the embedding is in vectors.csv
+    # vectors_df = pd.read_csv('vectors_06-03-2024.csv')
+    # if id in vectors_df['id']:
+    #   print("vector already created")
+    #   vector = vectors_df[vectors_df['id'] == id]['vector'].values[0]
+    # else:
+    #   print("Content not found in vectors.csv")
+    #   vector = get_embedding(content)
 
+    vector = get_embedding(content)
     keywords = get_keywords(content) # ollama
     orgs = get_orgs(content) # spacy
-    keywords = list(keywords.union(orgs)) # merge sets using union
+    keywords = list(keywords.union(orgs)) # merge sets
+
     # turn keywords into a string
-    # make all "" into '' in the list
     keywords = json.dumps(list(keywords))
-    keywords = keywords.replace('"', "'")
-    # verify type of keywords
+
+    # turned "" to '' (db issues)
+    # but this wasnt very smart
+    # keywords = keywords.replace('"', "'")
+
     print(f"Keywords: {keywords}")
   else:
     vector = get_embedding(title)
-    # should add some logic to derive content from comments
+    # should add some logic to derive content from comments...
     keywords = ''
+
   return add_to_collection(
     id=id,
     title=title,
@@ -101,7 +106,7 @@ def get_collection_ids():
   res = search_query(
     query="id > 0", 
     fields=["id"], 
-    limit=200
+    limit=500
   )
 
   for item in res:

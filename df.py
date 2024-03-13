@@ -21,11 +21,11 @@ def new_csv():
 
   df = pd.DataFrame(results)
 
-  csv_file_path = f'export_{datetime.now().strftime("%d-%m-%Y")}.csv'
+  csv_file_path = f'export_{datetime.now().strftime("%Y-%m-%d")}.csv'
   df.to_csv(csv_file_path, index=False)
 
 def main():
   df = pd.read_csv('export.csv')
   count_keywords(get_all_keywords(df))
 
-main()
+new_csv()
