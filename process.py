@@ -8,10 +8,10 @@ from embeddings import get_embedding
 import pandas as pd
 
 def main():
-  collection = get_collection_ids()
-  data = get_json_ids()
+  collection = get_collection_ids() # get ids from db
+  new_articles = get_json_ids() # ids to be processed
 
-  for date, ids in data.items():
+  for date, ids in new_articles.items():
     process_collection(collection, ids, date)
 
 def process_collection(collection, ids, date):
@@ -27,25 +27,17 @@ def process_entry(id, date):
   print(f"Processing {id} - {title}")
   
   if content is None:
+    # no HN comment, so I scrape the url
     content = scrape_content(url)
 
   if content:
-    # content = summarize_content(content)
-    # # verify if the embedding is in vectors.csv
-    # vectors_df = pd.read_csv('vectors_06-03-2024.csv')
-    # if id in vectors_df['id']:
-    #   print("vector already created")
-    #   vector = vectors_df[vectors_df['id'] == id]['vector'].values[0]
-    # else:
-    #   print("Content not found in vectors.csv")
-    #   vector = get_embedding(content)
-
+    content = summarize_content(content)
     vector = get_embedding(content)
-    keywords = get_keywords(content) # ollama
-    orgs = get_orgs(content) # spacy
+    keywords = get_keywords(content) # ollama 
+    orgs = get_orgs(content) # spacy entity recognition
     keywords = list(keywords.union(orgs)) # merge sets
 
-    # turn keywords into a string
+    # keywords as a string for the db
     keywords = json.dumps(list(keywords))
 
     # turned "" to '' (db issues)
@@ -54,8 +46,8 @@ def process_entry(id, date):
 
     print(f"Keywords: {keywords}")
   else:
+    # fallback to title as the embedding
     vector = get_embedding(title)
-    # should add some logic to derive content from comments...
     keywords = ''
 
   return add_to_collection(
