@@ -22,7 +22,7 @@ def keep_vectors(results):
   print(f"Storing {len(vectors)} vectors.")
   df = pd.DataFrame(vectors.items(), columns=['id', 'vector'])
 
-  csv_file_path = f'vectors_{datetime.now().strftime("%d-%m-%Y")}.csv'
+  csv_file_path = f'exports/vectors_{datetime.now().strftime("%d-%m-%Y")}.csv'
   df.to_csv(csv_file_path, index=False)
 
 main()

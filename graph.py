@@ -26,7 +26,7 @@ def main():
 
   # save it in a csv file
   df = pd.DataFrame(adjacency_list.items(), columns=['id', 'vector'])
-  csv_file_path = f'adjacency_{datetime.now().strftime("%Y-%m-%d")}.csv'
+  csv_file_path = f'exports/adjacency_{datetime.now().strftime("%Y-%m-%d")}.csv'
   df.to_csv(csv_file_path, index=False)
 
 

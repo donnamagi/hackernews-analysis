@@ -24,12 +24,12 @@ def new_csv():
 
   df = pd.DataFrame(results)
 
-  csv_file_path = f'export_{datetime.now().strftime("%Y-%m-%d")}.csv'
+  csv_file_path = f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv'
   df.to_csv(csv_file_path, index=False)
 
 def new_keywords_csv(keywords):
   df = pd.DataFrame(keywords, columns=['keyword', 'frequency'])
-  csv_file_path = f'keywords_{datetime.now().strftime("%Y-%m-%d")}.csv'
+  csv_file_path = f'exports/keywords_{datetime.now().strftime("%Y-%m-%d")}.csv'
   df.to_csv(csv_file_path, index=False)
 
 def main():
