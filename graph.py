@@ -18,7 +18,7 @@ def main():
 
     for item in similar: 
       if item['id'] != results[1]['id']:
-        if item['distance'] > 0.7 and item['id'] not in adjacency_list[results[i]['id']]:
+        if item['distance'] > 0.85 and item['id'] not in adjacency_list[results[i]['id']]:
           adjacency_list[results[1]['id']].append(item['id'])
           adjacency_list[item['id']].append(results[i]['id'])
 
