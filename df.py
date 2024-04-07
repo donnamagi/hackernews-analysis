@@ -20,7 +20,7 @@ def count_keywords(keywords: list):
   return Counter(keywords).most_common()
 
 def new_csv():
-  results = search_query(query= "id > 0", fields = ['id', 'title', 'keywords'], limit=1000)
+  results = search_query(query= "id > 0", fields = ['id', 'title', 'keywords', 'date'], limit=1000)
 
   df = pd.DataFrame(results)
 
@@ -34,10 +34,10 @@ def new_keywords_csv(keywords):
 
 def main():
   try:
-    df = pd.read_csv(f'export_{datetime.now().strftime("%Y-%m-%d")}.csv')
+    df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
   except FileNotFoundError:
     new_csv()
-    df = pd.read_csv(f'export_{datetime.now().strftime("%Y-%m-%d")}.csv')
+    df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
 
   kw = count_keywords(get_all_keywords(df))
   if input("Do you want to save the keywords in a csv file? (y/n): ") == 'y':
