@@ -23,13 +23,13 @@ def process_collection(collection, ids, date):
       print(f"{id} already in collection.")
 
 def process_entry(id, date):
-  title, url, content, comments = get_data_from_hn(id)
-  print(f"Processing {id} - {title}")
-  
+  story = get_hn_story(id)
+  print(f"Processing {story['id']} - {story['title']}")
+
+  content = story.get('text')
   if content is None:
     # no HN comment, so I scrape the url
-    content = scrape_content(url)
-
+    content = scrape_content(story['url'])
   if content:
     content = summarize_content(content)
     vector = get_embedding(content)
@@ -38,27 +38,20 @@ def process_entry(id, date):
     print(f"Keywords: {keywords}")
   else:
     # fallback to title as the embedding
-    vector = get_embedding(title)
-    keywords = ''
+    vector = get_embedding(story['title'])
+    keywords = get_keywords(story['title'])
 
-  return add_to_collection(
-    id=id,
-    title=title,
-    keywords=keywords,
-    vector=vector,
-    url=url,
-    content=content,
-    comments=comments,
-    date=date
-  )
+  # add data to the entry
+  story['vector'] = vector
+  story['keywords'] = keywords
+  story['content_summary'] = content
+  story['processing_date'] = date
 
-def get_data_from_hn(id):
-  story = get_hn_story(id)
-  title = story['title']
-  url = story['url'] if 'url' in story else None
-  content = story['text'] if 'text' in story else None
-  comments = story['kids'] if 'kids' in story else []
-  return title, url, content, comments
+  try:
+    return add_to_collection(story)
+  except Exception as e:
+    print(f"Error: {e}")
+
 
 def summarize_content(content):
   if content:
@@ -67,18 +60,8 @@ def summarize_content(content):
     return content
   return None # can't scrape, no HN comment
 
-def add_to_collection(id: int, vector: list, title: str, url: str, content: str, comments: list, date: str, keywords: str):
-  data = {
-    "id": id,
-    "title": title,
-    "keywords": keywords,
-    "vector": vector,
-    "url": url,
-    "content": content,
-    "comment_ids": comments,
-    "date": date,
-  }
-  if insert(data):
+def add_to_collection(story):
+  if insert(story):
     print(f"Added {id} to collection.")
     return True
   return False
