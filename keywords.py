@@ -7,9 +7,15 @@ import re
 nlp = spacy.load("en_core_web_sm")
 
 def get_keywords(summary):
+  # keywords from llama
   keywords = call_ollama(summary)
   keywords = clean_keywords(keywords)
-  return keywords
+
+  # entity recognition from spacy
+  orgs = get_orgs(summary)
+
+  # merge results
+  return list(keywords.union(orgs))
 
 def get_orgs(content):
   orgs = set()
@@ -19,7 +25,7 @@ def get_orgs(content):
     if label == 'ORG':
       orgs.add(entity)
 
-  return list(orgs)
+  return orgs
 
 def call_ollama(content):
   ollama_url = "http://localhost:11434/api/generate"
@@ -59,6 +65,16 @@ def clean_keywords(input_string):
 
     # remove chars and numbers
     cleaned_keywords = set(re.sub(r'[0-9.*]', '', line).strip() for line in cleaned_keywords)
+
+    # if any keyword is more than 100 characters, remove it
+    # most likely a parsing error and a full sentence of llama yapping
+    cleaned_keywords = set(keyword for keyword in cleaned_keywords if len(keyword) < 100)
+
     return cleaned_keywords # {str, str, ...}
   except:
     return ValueError(f"Can't parse: \n\n {input_string}")
+
+
+input = "In an interview with the co-founders of Zed, Thorsten asks about the technological choices behind the project, including the switch from Atom to Rust and the use of GPUs. The co-founders explain that these choices are closely tied to their vision for Zed and were made with the goal of creating a more refined and fleshed out version of their original vision for Atom. They also discuss how they decide what to polish and build-once-and-for-all-time, and what to ship faster."
+
+print(get_keywords(input))

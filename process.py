@@ -3,7 +3,7 @@ import json
 from milvus import insert, get_all_db_records
 from hackernews import get_hn_story
 from scrape import scrape_content, call_ollama, clean_text
-from keywords import get_keywords, get_orgs
+from keywords import get_keywords
 from embeddings import get_embedding
 import pandas as pd
 
@@ -33,15 +33,7 @@ def process_entry(id, date):
   if content:
     content = summarize_content(content)
     vector = get_embedding(content)
-    keywords = get_keywords(content) # ollama 
-    orgs = get_orgs(content) # spacy entity recognition
-    keywords = list(keywords.union(orgs)) # merge sets
-
-    keywords = list(keywords)
-
-    # if any keyword is more than 100 characters, remove it
-    # most likely a parsing error and a full sentence of llama yapping
-    keywords = [keyword for keyword in keywords if len(keyword) < 100]
+    keywords = get_keywords(content) 
 
     print(f"Keywords: {keywords}")
   else:
