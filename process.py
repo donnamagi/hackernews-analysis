@@ -24,7 +24,7 @@ def process_collection(collection, ids, date):
 
 def process_entry(id, date):
   story = get_hn_story(id)
-  print(f"Processing {story['id']} - {story['title']}")
+  print(f"\n\n Processing {story['id']} - {story['title']}")
 
   content = story.get('text')
   if content is None:
@@ -57,13 +57,13 @@ def summarize_content(content):
   if content:
     content = clean_text(content[:2000]) 
     content = clean_text(call_ollama(content)) # since ollama likes to yap
-    print(f"Summary: {content}")
+    print(f"\n\n Summary: {content} \n\n")
     return content
   return None # can't scrape, no HN comment
 
 def add_to_collection(story):
   if insert(story):
-    print(f"Added {id} to collection.")
+    print(f"Added {story['id']} to collection.")
     return True
   return False
 

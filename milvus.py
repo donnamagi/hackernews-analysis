@@ -16,21 +16,21 @@ client = MilvusClient(
 
 def insert(data):
   res = client.insert(
-    collection_name= 'Newsletter',
+    collection_name= 'HackerNews',
     data=data
   )
   return res
 
 def delete(ids):
   res = client.delete(
-    collection_name= 'Newsletter',
+    collection_name= 'HackerNews',
     pks=ids 
   )
   return res
 
 def search_vector(vectors, fields = OUTPUT_FIELDS, limit=RES_LIMIT):
   res = client.search(
-    collection_name= 'Newsletter',
+    collection_name= 'HackerNews',
     data=vectors, # [0.1, 0.2, ...], [0.3, 0.4, ...] etc for bulk search
     filter="content != ''",
     output_fields= fields,
@@ -40,7 +40,7 @@ def search_vector(vectors, fields = OUTPUT_FIELDS, limit=RES_LIMIT):
 
 def search_query(query, fields = OUTPUT_FIELDS, limit=RES_LIMIT):
   res = client.query(
-    collection_name= 'Newsletter',
+    collection_name= 'HackerNews',
     filter=query, # ''
     output_fields= fields,
     limit=limit
@@ -49,14 +49,14 @@ def search_query(query, fields = OUTPUT_FIELDS, limit=RES_LIMIT):
 
 def search_get(ids):
   res = client.get(
-    collection_name= 'Newsletter',
+    collection_name= 'HackerNews',
     ids=ids #[1, 2, 3, ...]
   )
   return res
 
 def get_all_db_records():
   res = client.query(
-    collection_name= 'Newsletter',
+    collection_name= 'HackerNews',
     filter="id > 0",
     output_fields= ["id", "title", "keywords", "vector", "url", "content", "comment_ids", "date"],
     limit=1000
