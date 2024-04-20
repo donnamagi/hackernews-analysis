@@ -1,4 +1,4 @@
-from milvus import search_query
+from milvus import get_all_db_records
 import json
 from datetime import datetime
 import numpy as np
@@ -9,11 +9,7 @@ from pprint import pprint
 
 if __name__ == '__main__':
   try:
-    res = search_query(
-      query="id > 0",
-      fields=["id", "title", "keywords", "vector", "url", "content", "comment_ids", "date"],
-      limit=1000
-    )
+    res = get_all_db_records()
     print(f"Exported {len(res)} items.")
 
     # convert float32 to float64 for JSON serialization

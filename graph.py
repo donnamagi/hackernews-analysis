@@ -1,11 +1,11 @@
-from milvus import search_vector, search_query
+from milvus import search_vector, get_all_db_records
 import pandas as pd
 from datetime import datetime
 from pprint import pprint
 
 def main():
   # get all vectors
-  results = search_query(query= "id > 0", fields = ['id', 'vector', 'title'], limit=1000)
+  results = get_all_db_records()
 
   # initialize an adjacency list
   adjacency_list = dict()

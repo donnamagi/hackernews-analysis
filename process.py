@@ -1,6 +1,6 @@
 import os
 import json
-from milvus import search_query, insert
+from milvus import insert, get_all_db_records
 from hackernews import get_hn_story
 from scrape import scrape_content, call_ollama, clean_text
 from keywords import get_keywords, get_orgs
@@ -94,11 +94,7 @@ def add_to_collection(id: int, vector: list, title: str, url: str, content: str,
 def get_collection_ids():
   ids = set()
 
-  res = search_query(
-    query="id > 0", 
-    fields=["id"], 
-    limit=1000
-  )
+  res = get_all_db_records()
 
   for item in res:
     ids.add(item['id'])

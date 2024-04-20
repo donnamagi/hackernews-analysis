@@ -1,5 +1,5 @@
 import pandas as pd
-from milvus import search_query
+from milvus import get_all_db_records
 from collections import Counter
 import ast
 from datetime import datetime
@@ -20,8 +20,7 @@ def count_keywords(keywords: list):
   return Counter(keywords).most_common()
 
 def new_csv():
-  results = search_query(query= "id > 0", fields = ['id', 'title', 'keywords', 'date'], limit=1000)
-
+  results = get_all_db_records()
   df = pd.DataFrame(results)
 
   csv_file_path = f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv'

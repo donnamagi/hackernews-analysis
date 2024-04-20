@@ -53,3 +53,14 @@ def search_get(ids):
     ids=ids #[1, 2, 3, ...]
   )
   return res
+
+def get_all_db_records():
+  res = client.query(
+    collection_name= 'Newsletter',
+    filter="id > 0",
+    output_fields= ["id", "title", "keywords", "vector", "url", "content", "comment_ids", "date"],
+    limit=1000
+  )
+  if len(res) == 1000:
+    return print("Limit reached. Only first 1000 items returned.")
+  return res
