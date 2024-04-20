@@ -1,11 +1,7 @@
-from milvus import search_query, delete
+from milvus import delete, get_all_db_records
 
 def main():
-  results = search_query(query= "date == '15-03-2024'", fields = ['id', 'vector'], limit=1000)
-
-
-  if len(results) == 0:
-    return print("No items found.")
+  results = get_all_db_records()
   
   ids = [item['id'] for item in results]
   print(f"Deleting {len(ids)} items.")
