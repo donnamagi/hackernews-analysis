@@ -56,7 +56,8 @@ def process_entry(id, date):
 def summarize_content(content):
   if content:
     content = clean_text(content[:2000]) 
-    content = clean_text(call_ollama(content)) # since ollama returns \n sometimes
+    content = clean_text(call_ollama(content)) # since ollama likes to yap
+    print(f"Summary: {content}")
     return content
   return None # can't scrape, no HN comment
 

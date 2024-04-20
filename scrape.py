@@ -3,11 +3,17 @@ from bs4 import BeautifulSoup
 import re
 import json
 
+
 def clean_text(text):
   """Remove extra spaces, newlines, and any script/style elements."""
   text = re.sub('\s+', ' ', text)
   text = re.sub('\n', ' ', text)
-  return text.strip()
+  
+  # since ollama likes to repeat the prompt in the response
+  # remove intro sentences for formats like "Sure! Here's a summary of the text in 3 sentences: "
+  cleaned_text = re.sub(r'^.*!.*:\s', '', text)
+  
+  return cleaned_text.strip()
 
 def set_description(soup : BeautifulSoup):
   description = ''

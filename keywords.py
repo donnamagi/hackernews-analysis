@@ -73,8 +73,3 @@ def clean_keywords(input_string):
     return cleaned_keywords # {str, str, ...}
   except:
     return ValueError(f"Can't parse: \n\n {input_string}")
-
-
-input = "In an interview with the co-founders of Zed, Thorsten asks about the technological choices behind the project, including the switch from Atom to Rust and the use of GPUs. The co-founders explain that these choices are closely tied to their vision for Zed and were made with the goal of creating a more refined and fleshed out version of their original vision for Atom. They also discuss how they decide what to polish and build-once-and-for-all-time, and what to ship faster."
-
-print(get_keywords(input))
