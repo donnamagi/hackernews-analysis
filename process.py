@@ -37,12 +37,11 @@ def process_entry(id, date):
     orgs = get_orgs(content) # spacy entity recognition
     keywords = list(keywords.union(orgs)) # merge sets
 
-    # keywords as a string for the db
-    keywords = json.dumps(list(keywords))
+    keywords = list(keywords)
 
-    # turned "" to '' (db issues)
-    # but this wasnt very smart
-    # keywords = keywords.replace('"', "'")
+    # if any keyword is more than 100 characters, remove it
+    # most likely a parsing error and a full sentence of llama yapping
+    keywords = [keyword for keyword in keywords if len(keyword) < 100]
 
     print(f"Keywords: {keywords}")
   else:
@@ -98,7 +97,7 @@ def get_collection_ids():
   res = search_query(
     query="id > 0", 
     fields=["id"], 
-    limit=500
+    limit=1000
   )
 
   for item in res:
