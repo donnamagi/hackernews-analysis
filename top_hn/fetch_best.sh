@@ -3,7 +3,7 @@
 url="https://hacker-news.firebaseio.com/v0/beststories.json?print=pretty"
 
 directory="$HOME/documents/projects/semantic/top_hn"
-file_name="$(date "+%d-%m-%Y").json"
+file_name="$(date "+%Y-%m-%d").json"
 
 if [ ! -f "${directory}/${file_name}" ]; then
   # body + status code
