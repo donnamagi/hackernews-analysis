@@ -1,11 +1,11 @@
-import os
-import json
 from milvus import insert, get_all_db_records
 from hackernews import get_hn_story
 from scrape import scrape_content, call_ollama, clean_text
 from keywords import get_keywords
 from embeddings import get_embedding
-import pandas as pd
+from datetime import datetime
+import os
+import json
 
 def main():
   collection = get_collection_ids() # get ids from db
@@ -45,7 +45,7 @@ def process_entry(id, date):
   story['vector'] = vector
   story['keywords'] = keywords
   story['content_summary'] = content
-  story['processing_date'] = date
+  story['processing_date'] = unix(date)
 
   try:
     return add_to_collection(story)
@@ -88,6 +88,11 @@ def get_json_ids():
       ids_per_date[date] = json_ids
 
   return ids_per_date
+
+def unix(date_string):
+  date_obj = datetime.strptime(date_string, '%Y-%m-%d')
+  unix_timestamp = int(datetime.timestamp(date_obj))
+  return unix_timestamp
 
 if __name__ == "__main__":
   main()
