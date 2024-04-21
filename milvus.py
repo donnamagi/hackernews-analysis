@@ -58,7 +58,7 @@ def get_all_db_ids():
   res = client.query(
     collection_name= 'HackerNews',
     filter="id > 0",
-    output_fields= ["id", "title", "keywords", "vector", "url", "content", "comment_ids", "date"],
+    output_fields= ["id"],
     limit=1000
   )
   if len(res) == 1000:
@@ -69,7 +69,7 @@ def get_all_db_data():
   res = client.query(
     collection_name= 'HackerNews',
     filter="id > 0",
-    output_fields= ["id", "title", "keywords", "url", "content", "comment_ids", "date", "processing_date", "score"],
+    output_fields= ["id", "title", "keywords", "url", "content_summary", "time", "processing_date", "score", "type"],
     limit=1000
   )
   if len(res) == 1000:
