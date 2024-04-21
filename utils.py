@@ -71,8 +71,11 @@ def get_mentions_per_day(keywords: list):
   for index, row in df.iterrows():
     for keyword in keywords:
       if keyword in row['Keywords']:
-        keyword_mentions.append({'Date': row['Date'], f'{keyword}': int(row['Keywords'][keyword])})
+        # if the last entry in the list has the same date, append the keyword to that entry
+        if len(keyword_mentions) > 0 and keyword_mentions[-1]['Date'] == row['Date']:
+          keyword_mentions[-1][keyword] = row['Keywords'][keyword]
+        else:
+          keyword_mentions.append({'Date': row['Date'], keyword: row['Keywords'][keyword]})
 
-  columns = ['Date'] + [keyword for keyword in keywords]
-
+  columns = ['Date'] + [keyword for keyword in keywords]  
   return pd.DataFrame(keyword_mentions, columns=columns)

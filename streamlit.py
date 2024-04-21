@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 from datetime import datetime
+import altair as alt
 from utils import get_articles_per_week, get_mentions_per_day
 
 
@@ -28,3 +29,18 @@ options = st.multiselect(
 
 st.scatter_chart(get_mentions_per_day(options), x='Date')
 
+
+keywords = ['Security', 'Backdoor', 'Open source']
+source = get_mentions_per_day(keywords)
+source['Total mentions'] = source[keywords].sum(axis=1)
+
+chart = alt.Chart(source).mark_circle().encode(
+    x='Date', y='Total mentions', color='Total mentions', tooltip=['Date', 'Security', 'Backdoor', 'Open source']
+).interactive()
+
+tab1, tab2 = st.tabs(["XZ Backdoor attack", "tab2"])
+
+with tab1:
+  st.altair_chart(chart, use_container_width=True)
+with tab2:
+  st.altair_chart(chart, theme=None, use_container_width=True)
