@@ -1,9 +1,9 @@
 import pandas as pd
-import numpy as np
 import streamlit as st
 from datetime import datetime
 import altair as alt
-from utils import get_articles_per_week, get_mentions_per_day
+from utils import get_articles_per_week, get_mentions_per_day, get_week_start_end_dates
+from trying import main as get_companies_per_week
 
 
 export = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
@@ -25,9 +25,9 @@ options = ['AI', 'Apple', 'GitHub', 'Security', 'Performance', 'Google', 'API', 
 options = st.multiselect(
     'Choose keywords to plot',
     options,
-    ['AI', 'Apple'])
+    options)
 
-st.scatter_chart(get_mentions_per_day(options), x='date')
+st.scatter_chart(get_mentions_per_day(options), x='date', size= options[0])
 
 
 
@@ -35,7 +35,7 @@ events = [
   {
     'title': 'XZ Backdoor attack discovered',
     'annotations': [('Mar 29, 2024', 'XZ Backdoor attack discovered on March 29th')],
-    'keywords': ['Security', 'Backdoor', 'Open source', 'XZ']
+    'keywords': ['Security', 'Backdoor', 'Open source', 'XZ', 'Xz']
   },
   {
     'title': "Apple's conflict with Spotify and Epic Games",
@@ -69,7 +69,7 @@ for event in events:
   annotations_df["Total mentions"] = mentions_df['Total mentions'].max()
   event['annotations'] = annotations_df
 
-st.write("## Events")
+st.write("## Significant events")
 
 titles = [event['title'] for event in events]
 tab1, tab2, tab3, tab4 = st.tabs(titles)
@@ -79,7 +79,7 @@ with tab1:
            The attack raised concerns about the security of open source software, and the execution 
            sparked widespread discussion.""")
   chart = alt.Chart(events[0]['df']).mark_circle().encode(
-    x='date', y='Total mentions', color='Total mentions', tooltip=['date'] + events[0]['keywords']
+    x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[0]['keywords']
   ).interactive()
 
   annotation_layer = (
@@ -103,7 +103,7 @@ with tab2:
            Spotify raised concerns over Apple's App Store policies, which resulted in a 1.8b fine from the EU.
            Straight after, Apple's termination of Epic Games' developer account (Fortnite) sparked a lawsuit.""")
   chart = alt.Chart(events[1]['df']).mark_circle().encode(
-    x='date', y='Total mentions', color='Total mentions', tooltip=['date'] + events[1]['keywords']
+    x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[1]['keywords']
   ).interactive()
 
   annotation_layer = (
@@ -128,7 +128,7 @@ with tab3:
            The act was met with mixed reactions, with some praising the EU for taking a step towards AI regulation,
            while others criticized the act for being too restrictive.""")
   chart = alt.Chart(events[2]['df']).mark_circle().encode(
-    x='date', y='Total mentions', color='Total mentions', tooltip=['date'] + events[2]['keywords']
+    x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[2]['keywords']
   ).interactive()
 
   annotation_layer = (
@@ -151,7 +151,7 @@ with tab4:
             With anonymous reviews of companies being publicised with names, the trustworthiness
             of Glassdoor was under heavy scrutiny.""")
   chart = alt.Chart(events[3]['df']).mark_circle().encode(
-    x='date', y='Total mentions', color='Total mentions', tooltip=['date'] + events[3]['keywords']
+    x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[3]['keywords']
   ).interactive()
 
   annotation_layer = (
@@ -168,3 +168,19 @@ with tab4:
     (chart + annotation_layer).interactive(),
     use_container_width=True
 )
+
+st.write("## Most mentioned companies per week")
+
+df = get_companies_per_week()
+st.line_chart(df, x='Week')
+
+# chart = alt.Chart(df).mark_bar().encode(
+#     x='Week',
+#     y='count',
+#     color='Company',
+#     size='count',
+#     tooltip=['Week', 'Company', 'count']
+# ).interactive()
+
+# st.altair_chart(chart, use_container_width=True)
+

@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from pprint import pprint
 import ast
+import spacy
 
 def convert_to_datetime(df):
   df['date'] = pd.to_datetime(df['time'], unit='s')
@@ -14,12 +15,8 @@ def get_list(x):
   return ast.literal_eval(x)
 
 def get_dataframes_by_week():
-
   df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
-  df.drop(df.index[0], inplace=True) # csv header row
-
-  df = convert_to_datetime(df)
-  all_dates_by_week = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='W-MON')
+  all_dates_by_week = get_week_start_end_dates()
 
   for i in range(len(all_dates_by_week)-1):
     start_date = all_dates_by_week[i]
@@ -27,7 +24,8 @@ def get_dataframes_by_week():
 
     week_df = df[(df['date'] >= start_date) & (df['date'] < end_date)]
     
-    week_df.to_csv(f'exports/weekly/weekly_{start_date.strftime("%Y-%m-%d")}.csv', index=False)
+    return week_df
+    # week_df.to_csv(f'exports/weekly/weekly_{start_date.strftime("%Y-%m-%d")}.csv', index=False)
 
 def get_articles_per_week():
   data = []
@@ -77,5 +75,13 @@ def get_mentions_per_day(keywords: list):
         else:
           keyword_mentions.append({'date': row['date'], keyword: row['Keywords'][keyword]})
 
-  columns = ['date'] + [keyword for keyword in keywords]  
+  columns = ['date'] + [keyword for keyword in keywords]
   return pd.DataFrame(keyword_mentions, columns=columns)
+
+def get_week_start_end_dates():
+  df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
+  df.drop(df.index[0], inplace=True) # csv header row
+
+  df = convert_to_datetime(df)
+  all_dates_by_week = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='W-MON')
+  return all_dates_by_week
