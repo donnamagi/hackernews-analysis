@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 from datetime import datetime
-from utils import get_articles_per_week
+from utils import get_articles_per_week, get_mentions_per_day
 
 
 export = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
@@ -17,4 +17,8 @@ st.write(keywords)
 
 st.write("Articles added per week:")
 st.line_chart(get_articles_per_week(), x='Date', y='Count')
+
+keyword = 'Backdoor'
+st.write(f"Mentions of {keyword} per day:")
+st.line_chart(get_mentions_per_day(keyword), x='Date', y=f'{keyword} mentions')
 
