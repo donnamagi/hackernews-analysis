@@ -49,6 +49,11 @@ events = [
     'title': 'The AI Act',
     'annotations': [('Mar 13, 2024', 'The AI Act is passed on March 13th')],
     'keywords': ['EU', 'the European Union', 'Artificial intelligence', 'AI Act']
+  },
+  {
+    'title': 'Glassdoor leak',
+    'annotations': [('Mar 19, 2024', 'Glassdoor users discover their anonymous reviews are public on March 19th')],
+    'keywords': ['Glassdoor', 'Privacy', 'User data', 'Leak', 'Data breach']
   }
 ]
 
@@ -67,7 +72,7 @@ for event in events:
 st.write("## Events")
 
 titles = [event['title'] for event in events]
-tab1, tab2, tab3 = st.tabs(titles)
+tab1, tab2, tab3, tab4 = st.tabs(titles)
 
 with tab1:
   st.write("""A security backdoor was found in a widely used open source piece of software - XZ. 
@@ -118,12 +123,39 @@ with tab2:
 
 
 with tab3:
+  st.write("""
+           The AI Act was passed by the European Union on March 13th, which set new regulations for AI systems.
+           The act was met with mixed reactions, with some praising the EU for taking a step towards AI regulation,
+           while others criticized the act for being too restrictive.""")
   chart = alt.Chart(events[2]['df']).mark_circle().encode(
     x='date', y='Total mentions', color='Total mentions', tooltip=['date'] + events[2]['keywords']
   ).interactive()
 
   annotation_layer = (
     alt.Chart(events[2]['annotations'])
+    .mark_text(size=20, text="⬇", dx=0, dy=-10, align="center", baseline="middle", color="white")
+    .encode(
+        x="date:T",
+        y=alt.Y("Total mentions:Q"),
+        tooltip=["event"],
+    )
+    .interactive()
+  )
+  st.altair_chart(
+    (chart + annotation_layer).interactive(),
+    use_container_width=True
+)
+
+with tab4:
+  st.write("""Around March 19th, the topic of Glassdoor's user privacy went viral after a technical glitch.
+            With anonymous reviews of companies being publicised with names, the trustworthiness
+            of Glassdoor was under heavy scrutiny.""")
+  chart = alt.Chart(events[3]['df']).mark_circle().encode(
+    x='date', y='Total mentions', color='Total mentions', tooltip=['date'] + events[3]['keywords']
+  ).interactive()
+
+  annotation_layer = (
+    alt.Chart(events[3]['annotations'])
     .mark_text(size=20, text="⬇", dx=0, dy=-10, align="center", baseline="middle", color="white")
     .encode(
         x="date:T",
