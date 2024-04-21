@@ -5,8 +5,8 @@ from pprint import pprint
 import ast
 
 def convert_to_datetime(df):
-  df['Date'] = pd.to_datetime(df['time'], unit='s')
-  df['Processing Date'] = pd.to_datetime(df['processing_date'], unit='s')
+  df['date'] = pd.to_datetime(df['time'], unit='s')
+  df['Processing date'] = pd.to_datetime(df['processing_date'], unit='s')
   df.drop(columns=['time', 'processing_date'], inplace=True)
   return df
 
@@ -19,13 +19,13 @@ def get_dataframes_by_week():
   df.drop(df.index[0], inplace=True) # csv header row
 
   df = convert_to_datetime(df)
-  all_dates_by_week = pd.date_range(start=df['Date'].min(), end=df['Date'].max(), freq='W-MON')
+  all_dates_by_week = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='W-MON')
 
   for i in range(len(all_dates_by_week)-1):
     start_date = all_dates_by_week[i]
     end_date = all_dates_by_week[i+1]
 
-    week_df = df[(df['Date'] >= start_date) & (df['Date'] < end_date)]
+    week_df = df[(df['date'] >= start_date) & (df['date'] < end_date)]
     
     week_df.to_csv(f'exports/weekly/weekly_{start_date.strftime("%Y-%m-%d")}.csv', index=False)
 
@@ -37,9 +37,9 @@ def get_articles_per_week():
     # create a new dataframe with the count of articles per week
     count = df['id'].count()
     date = file.split('_')[1].split('.')[0]
-    data.append({'Date': date, 'Count': count})
+    data.append({'date': date, 'Count': count})
 
-  return pd.DataFrame(data, columns=['Date', 'Count'])
+  return pd.DataFrame(data, columns=['date', 'Count'])
 
 def get_keywords_per_day():
   data = []
@@ -47,12 +47,12 @@ def get_keywords_per_day():
   df.drop(df.index[0], inplace=True) # csv header row
 
   df = convert_to_datetime(df)
-  all_dates_by_day = pd.date_range(start=df['Date'].min(), end=df['Date'].max(), freq='D', unit='s')
+  all_dates_by_day = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='D', unit='s')
 
   for date in all_dates_by_day:
     keywords = {}
     # get all articles published on that day
-    day_df = df[df['Date'].dt.date == date.date()]
+    day_df = df[df['date'].dt.date == date.date()]
     for index, row in day_df.iterrows():
       for keyword in get_list(row['keywords']):
         if keyword in keywords:
@@ -61,9 +61,9 @@ def get_keywords_per_day():
           keywords[keyword] = 1
 
 
-    data.append({'Date': date, 'Keywords': keywords})
+    data.append({'date': date, 'Keywords': keywords})
     
-  return pd.DataFrame(data, columns=['Date', 'Keywords'])
+  return pd.DataFrame(data, columns=['date', 'Keywords'])
 
 def get_mentions_per_day(keywords: list):
   df = get_keywords_per_day()
@@ -72,10 +72,10 @@ def get_mentions_per_day(keywords: list):
     for keyword in keywords:
       if keyword in row['Keywords']:
         # if the last entry in the list has the same date, append the keyword to that entry
-        if len(keyword_mentions) > 0 and keyword_mentions[-1]['Date'] == row['Date']:
+        if len(keyword_mentions) > 0 and keyword_mentions[-1]['date'] == row['date']:
           keyword_mentions[-1][keyword] = row['Keywords'][keyword]
         else:
-          keyword_mentions.append({'Date': row['Date'], keyword: row['Keywords'][keyword]})
+          keyword_mentions.append({'date': row['date'], keyword: row['Keywords'][keyword]})
 
-  columns = ['Date'] + [keyword for keyword in keywords]  
+  columns = ['date'] + [keyword for keyword in keywords]  
   return pd.DataFrame(keyword_mentions, columns=columns)
