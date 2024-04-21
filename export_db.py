@@ -1,4 +1,4 @@
-from milvus import get_all_db_records
+from milvus import get_all_db_data
 import json
 from datetime import datetime
 import numpy as np
@@ -9,7 +9,7 @@ from pprint import pprint
 
 if __name__ == '__main__':
   try:
-    res = get_all_db_records()
+    res = get_all_db_data()
     print(f"Exported {len(res)} items.")
 
     # convert float32 to float64 for JSON serialization

@@ -54,7 +54,7 @@ def search_get(ids):
   )
   return res
 
-def get_all_db_records():
+def get_all_db_ids():
   res = client.query(
     collection_name= 'HackerNews',
     filter="id > 0",

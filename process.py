@@ -1,4 +1,4 @@
-from milvus import insert, get_all_db_records
+from milvus import insert, get_all_db_ids
 from hackernews import get_hn_story
 from scrape import scrape_content, call_ollama, clean_text
 from keywords import get_keywords
@@ -70,7 +70,7 @@ def add_to_collection(story):
 def get_collection_ids():
   ids = set()
 
-  res = get_all_db_records()
+  res = get_all_db_ids()
 
   for item in res:
     ids.add(item['id'])
