@@ -64,3 +64,14 @@ def get_all_db_records():
   if len(res) == 1000:
     return print("Limit reached. Only first 1000 items returned.")
   return res
+
+def get_all_db_data():
+  res = client.query(
+    collection_name= 'HackerNews',
+    filter="id > 0",
+    output_fields= ["id", "title", "keywords", "url", "content", "comment_ids", "date", "processing_date", "score"],
+    limit=1000
+  )
+  if len(res) == 1000:
+    return print("Limit reached. Only first 1000 items returned.")
+  return res

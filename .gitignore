@@ -7,3 +7,4 @@ credentials.json
 .ipynb_checkpoints/
 top_hn/*.json
 backups/
+exports/
