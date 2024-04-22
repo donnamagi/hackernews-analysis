@@ -1,13 +1,14 @@
 import pandas as pd
+import numpy as np
 import streamlit as st
 from datetime import datetime
 import altair as alt
 from utils import get_articles_per_week, get_mentions_per_day, get_week_start_end_dates
-from trying import main as get_companies_per_week
+from trying import get_all_companies_per_week, get_companies_per_week
 
 
-export = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
-keywords = pd.read_csv(f'exports/keywords_{datetime.now().strftime("%Y-%m-%d")}.csv')
+export = pd.read_csv(f'exports/export_2024-04-21.csv')
+keywords = pd.read_csv(f'exports/keywords_2024-04-21.csv')
 
 
 st.write("## The data I am working with")
@@ -29,7 +30,29 @@ options = st.multiselect(
 
 st.scatter_chart(get_mentions_per_day(options), x='date', size= options[0])
 
+st.write("## Mentions of popular companies per week")
+st.write("This graph can be a bit overwhelming, but it did push me to look into why there might be certain spikes in the data.")
 
+df = get_all_companies_per_week()
+st.line_chart(df, x='Week')
+
+st.write("""
+         Besides the clear technical bias, there is no obvious pattern to the amount of front-page attention 
+         companies receive. 
+         
+         I suspected a correlation with real-world events that trigger this spike in community attention. 
+         """)
+df_long = pd.melt(df, id_vars=['Week'], var_name='Company', value_name='Mentions')
+st.scatter_chart(df_long, x='Company', y='Week', size='Mentions', color='Company', height=400)
+
+companies = ['Boeing', 'Google', 'Intel', 'Apple', 'GitHub', 'Android', 'the European Union', 'ChatGPT', 'YouTube']
+defaults = ['Apple', 'Google', 'the European Union']
+company_options = st.multiselect(
+      'Companies to plot',
+      companies, defaults)
+
+new_df = get_companies_per_week(company_options, df)
+st.line_chart(new_df, x='Week')
 
 events = [
   {
@@ -47,7 +70,7 @@ events = [
   },
   {
     'title': 'The AI Act',
-    'annotations': [('Mar 13, 2024', 'The AI Act is passed on March 13th')],
+    'annotations': [('Mar 12, 2024', 'The finalizing of the AI Act is announced on March 12th')],
     'keywords': ['EU', 'the European Union', 'Artificial intelligence', 'AI Act']
   },
   {
@@ -169,18 +192,4 @@ with tab4:
     use_container_width=True
 )
 
-st.write("## Most mentioned companies per week")
-
-df = get_companies_per_week()
-st.line_chart(df, x='Week')
-
-# chart = alt.Chart(df).mark_bar().encode(
-#     x='Week',
-#     y='count',
-#     color='Company',
-#     size='count',
-#     tooltip=['Week', 'Company', 'count']
-# ).interactive()
-
-# st.altair_chart(chart, use_container_width=True)
 
