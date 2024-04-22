@@ -5,6 +5,7 @@ from datetime import datetime
 import altair as alt
 from utils import get_articles_per_week, get_mentions_per_day, get_week_start_end_dates
 from trying import get_all_companies_per_week, get_companies_per_week
+from events import get_events
 
 
 export = pd.read_csv(f'exports/export_2024-04-21.csv')
@@ -74,46 +75,17 @@ company_options = st.multiselect(
 new_df = get_companies_per_week(company_options, df)
 st.line_chart(new_df, x='Week', height=300)
 
-events = [
-  {
-    'title': 'XZ Backdoor attack discovered',
-    'annotations': [('Mar 29, 2024', 'XZ Backdoor attack discovered on March 29th')],
-    'keywords': ['Security', 'Backdoor', 'Open source', 'XZ', 'Xz']
-  },
-  {
-    'title': "Apple's conflict with Spotify and Epic Games",
-    'annotations': [
-      ('Mar 04, 2024', 'EU announces 1.8 billion fine for Apple on March 4th'),
-      ('Mar 06, 2024', 'Apple terminates developer account of Epic Games on March 6th'),
-      ],
-    'keywords': ['Apple', 'Epic Games', 'Fortnite', 'The Digital Markets Act', 'App Store', 'Spotify', 'Lawsuit']
-  },
-  {
-    'title': 'The AI Act',
-    'annotations': [('Mar 12, 2024', 'The finalizing of the AI Act is announced on March 12th')],
-    'keywords': ['EU', 'the European Union', 'Artificial intelligence', 'AI Act']
-  },
-  {
-    'title': 'Glassdoor leak',
-    'annotations': [('Mar 19, 2024', 'Glassdoor users discover their anonymous reviews are public on March 19th')],
-    'keywords': ['Glassdoor', 'Privacy', 'User data', 'Leak', 'Data breach']
-  }
-]
-
-for event in events:
-  # total sum of keyword mentions
-  mentions_df = get_mentions_per_day(event['keywords'])
-  mentions_df['Total mentions'] = mentions_df[event['keywords']].sum(axis=1)
-  event['df'] = mentions_df
-
-  # annotations to df
-  annotations_df = pd.DataFrame(event['annotations'], columns=["date", "event"])
-  annotations_df.date = pd.to_datetime(annotations_df.date)
-  annotations_df["Total mentions"] = mentions_df['Total mentions'].max()
-  event['annotations'] = annotations_df
-
 st.write("## Significant events")
 
+st.write("""
+          The weekly mentions of companies are seem to align with real-world events.
+          As I investigated further, I found a few events that stood out in the dataset.
+         
+          It became apparent that certain events and key announcement influenced the community's 
+          general attention towards certain more general topics. 
+          """)
+
+events = get_events()
 titles = [event['title'] for event in events]
 tab1, tab2, tab3, tab4 = st.tabs(titles)
 
@@ -121,6 +93,8 @@ with tab1:
   st.write("""A security backdoor was found in a widely used open source piece of software - XZ. 
            The attack raised concerns about the security of open source software, and the execution 
            sparked widespread discussion.""")
+  
+  st.write(f"Counting mentions for the following keywords: {events[0]['keywords']}")
   chart = alt.Chart(events[0]['df']).mark_circle().encode(
     x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[0]['keywords']
   ).interactive()
@@ -145,6 +119,7 @@ with tab2:
   st.write("""In the span of a couple of days, Apple was the center of attention in the tech world.
            Spotify raised concerns over Apple's App Store policies, which resulted in a 1.8b fine from the EU.
            Straight after, Apple's termination of Epic Games' developer account (Fortnite) sparked a lawsuit.""")
+  st.write(f"Counting mentions for the following keywords: {events[1]['keywords']}")
   chart = alt.Chart(events[1]['df']).mark_circle().encode(
     x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[1]['keywords']
   ).interactive()
@@ -170,6 +145,7 @@ with tab3:
            The AI Act was passed by the European Union on March 13th, which set new regulations for AI systems.
            The act was met with mixed reactions, with some praising the EU for taking a step towards AI regulation,
            while others criticized the act for being too restrictive.""")
+  st.write(f"Counting mentions for the following keywords: {events[2]['keywords']}")
   chart = alt.Chart(events[2]['df']).mark_circle().encode(
     x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[2]['keywords']
   ).interactive()
@@ -193,6 +169,7 @@ with tab4:
   st.write("""Around March 19th, the topic of Glassdoor's user privacy went viral after a technical glitch.
             With anonymous reviews of companies being publicised with names, the trustworthiness
             of Glassdoor was under heavy scrutiny.""")
+  st.write(f"Counting mentions for the following keywords: {events[3]['keywords']}")
   chart = alt.Chart(events[3]['df']).mark_circle().encode(
     x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[3]['keywords']
   ).interactive()
