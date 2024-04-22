@@ -6,10 +6,10 @@ import spacy
 import ast
 
 nlp = spacy.load('en_core_web_sm')
-TOP_KEYWORDS_AMOUNT = 20
-EVAL_COUNT = 10
+TOP_KEYWORDS_AMOUNT = 30
+EVAL_COUNT = 15
 
-def main():
+def get_all_companies_per_week():
   all_dates_by_week = get_week_start_end_dates()
 
   date_ranges = list(zip(all_dates_by_week[:-1], all_dates_by_week[1:])) 
@@ -17,7 +17,7 @@ def main():
 
 
 
-  df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
+  df = pd.read_csv(f'exports/export_2024-04-21.csv')
   weekly_keywords = []
   df['time'] = pd.to_datetime(df['time'], unit='s')
 
@@ -45,8 +45,9 @@ def main():
   # name the weeks
   top_weekly = {date_ranges_named[i]: top_weekly[i] for i in range(len(date_ranges_named))}
 
-  # get descriptive keywords
-  COMMON_ABBREVIATIONS = ['AI', 'ML', 'CSS', 'API', 'GPU', 'SQL']
+  # filter out abbreviations and non-organizations
+  COMMON_ABBREVIATIONS = ['AI', 'ML', 'CSS', 'API', 'GPU', 'CPU', 'CUDA', 'IP', 'SQL', 
+                          'SSH', 'JIT', 'EU', 'Xz', 'AMD', 'Interpretable ML']
   def is_organization(keyword):
     if keyword in COMMON_ABBREVIATIONS:
       return False
@@ -56,24 +57,24 @@ def main():
         return True
     return False
 
-  top_5_weekly_orgs = {}
+  top_weekly_orgs = {}
   for week, keywords in top_weekly.items():
     for keyword, count in keywords:
       if is_organization(keyword):
-        if week not in top_5_weekly_orgs:
-          top_5_weekly_orgs[week] = [(keyword, count)]
+        if week not in top_weekly_orgs:
+          top_weekly_orgs[week] = [(keyword, count)]
         else:
-          top_5_weekly_orgs[week].append((keyword, count))
+          top_weekly_orgs[week].append((keyword, count))
 
   # lists need to be the same length for the df. adding empty tuples where needed
-  max_len = max(len(keywords) for keywords in top_5_weekly_orgs.values())
-  for week, keywords in top_5_weekly_orgs.items():
+  max_len = max(len(keywords) for keywords in top_weekly_orgs.values())
+  for week, keywords in top_weekly_orgs.items():
     if len(keywords) < max_len:
-      top_5_weekly_orgs[week].extend([('', '')] * (max_len - len(keywords)))
+      top_weekly_orgs[week].extend([('', '')] * (max_len - len(keywords)))
 
   # finding all unique organizations in the dict
   all_orgs = set()
-  for week, keywords in top_5_weekly_orgs.items():
+  for week, keywords in top_weekly_orgs.items():
     for keyword, count in keywords:
       if keyword != '':
         all_orgs.add(keyword)
@@ -83,7 +84,7 @@ def main():
 
   # making rows weeks and columns the mentions of specific orgs
   data = []
-  for week, keywords in top_5_weekly_orgs.items():
+  for week, keywords in top_weekly_orgs.items():
     row = [week]
     for org in all_orgs:
       for keyword, count in keywords:
@@ -95,6 +96,9 @@ def main():
     data.append(row)
 
   df = pd.DataFrame(data, columns=columns)
-
   return df
 
+def get_companies_per_week(companies : list, df : pd.DataFrame):
+  # only keep the columns that are in the list
+  df = df[['Week'] + companies]
+  return df
