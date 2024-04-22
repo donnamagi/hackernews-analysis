@@ -15,7 +15,7 @@ def get_list(x):
   return ast.literal_eval(x)
 
 def get_dataframes_by_week():
-  df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
+  df = pd.read_csv(f'exports/export_2024-04-21.csv')
   all_dates_by_week = get_week_start_end_dates()
 
   for i in range(len(all_dates_by_week)-1):
@@ -41,7 +41,7 @@ def get_articles_per_week():
 
 def get_keywords_per_day():
   data = []
-  df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
+  df = pd.read_csv(f'exports/export_2024-04-21.csv')
   df.drop(df.index[0], inplace=True) # csv header row
 
   df = convert_to_datetime(df)
@@ -79,7 +79,7 @@ def get_mentions_per_day(keywords: list):
   return pd.DataFrame(keyword_mentions, columns=columns)
 
 def get_week_start_end_dates():
-  df = pd.read_csv(f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv')
+  df = pd.read_csv(f'exports/export_2024-04-21.csv')
   df.drop(df.index[0], inplace=True) # csv header row
 
   df = convert_to_datetime(df)
