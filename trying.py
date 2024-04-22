@@ -13,9 +13,7 @@ def get_all_companies_per_week():
   all_dates_by_week = get_week_start_end_dates()
 
   date_ranges = list(zip(all_dates_by_week[:-1], all_dates_by_week[1:])) 
-  date_ranges_named = [f"{start.date()} - {end.date()}" for start, end in date_ranges]  
-
-
+  date_ranges_named = [f"{start.date().strftime('%m.%d')} - {end.date().strftime('%m.%d')}" for start, end in date_ranges]  
 
   df = pd.read_csv(f'exports/export_2024-04-21.csv')
   weekly_keywords = []
@@ -28,8 +26,7 @@ def get_all_companies_per_week():
       if not filtered_df.empty:
           filtered_keywords = []
           for keywords in filtered_df['keywords']:
-              if isinstance(keywords, str):
-                  keywords = ast.literal_eval(keywords)
+              keywords = ast.literal_eval(keywords)
               filtered_keywords.extend(keywords)
           weekly_keywords.append(filtered_keywords)
       else:
@@ -96,7 +93,9 @@ def get_all_companies_per_week():
     data.append(row)
 
   df = pd.DataFrame(data, columns=columns)
-  return df
+  long_format_df = pd.melt(df, id_vars=['Week'], var_name='Company', value_name='Mentions')
+
+  return df, long_format_df
 
 def get_companies_per_week(companies : list, df : pd.DataFrame):
   # only keep the columns that are in the list

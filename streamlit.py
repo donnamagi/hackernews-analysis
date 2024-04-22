@@ -22,7 +22,9 @@ st.line_chart(get_articles_per_week(), x='date', y='Count')
 
 st.write("## Mentions of keywords per day")
 
-options = ['AI', 'Apple', 'GitHub', 'Security', 'Performance', 'Google', 'API', 'Development', 'Technology', 'Language models', 'Privacy', 'Open-source', 'EU', 'Open source', 'Linux', 'Automation', 'the European Union']
+options = ['AI', 'Apple', 'GitHub', 'Security', 'Performance', 'Google', 'API', 
+           'Development', 'Technology', 'Language models', 'Privacy', 'Open-source', 
+           'EU', 'Open source', 'Linux', 'Automation', 'the European Union']
 options = st.multiselect(
     'Choose keywords to plot',
     options,
@@ -30,29 +32,47 @@ options = st.multiselect(
 
 st.scatter_chart(get_mentions_per_day(options), x='date', size= options[0])
 
-st.write("## Mentions of popular companies per week")
-st.write("This graph can be a bit overwhelming, but it did push me to look into why there might be certain spikes in the data.")
+st.write("# Companies in the spotlight")
+st.write("""
+         To start from somewhere, I looked into the most popular keywords per week.
+         From there, I filtered out the mentions of companies and other organizations.
 
-df = get_all_companies_per_week()
-st.line_chart(df, x='Week')
+         This is not every organization mentioned in the dataset, but rather companies that
+         stood out in the top 15 conversational keywords every week.
+         """)
+
+st.write("### Companies mentioned per week")
+df, long_df = get_all_companies_per_week()
+st.scatter_chart(long_df, x='Company', y='Week', size='Mentions', color='Company', height=400)
 
 st.write("""
          Besides the clear technical bias, there is no obvious pattern to the amount of front-page attention 
          companies receive. 
          
          I suspected a correlation with real-world events that trigger this spike in community attention. 
-         """)
-df_long = pd.melt(df, id_vars=['Week'], var_name='Company', value_name='Mentions')
-st.scatter_chart(df_long, x='Company', y='Week', size='Mentions', color='Company', height=400)
 
+         ##### Let's take a closer look
+
+         Why was Google mentioned so frequently in the week of February 11th, 2024? Filtering the articles of that week
+         for the keyword 'Google' gives us this:
+         """)
+
+weekly_df = pd.read_csv('exports/weekly/weekly_2024-02-19.csv')
+weekly_df = weekly_df[weekly_df['keywords'].str.contains('Google', case=False, na=False)]
+weekly_df = weekly_df[['title', 'keywords', 'content_summary', 'Date', 'Processing Date']]
+st.write(weekly_df)
+
+st.write("Based on the titles of the articles, this seems to be the week when Google released two new AI models.")
+
+## build something like – select company and get the articles for it?
 companies = ['Boeing', 'Google', 'Intel', 'Apple', 'GitHub', 'Android', 'the European Union', 'ChatGPT', 'YouTube']
-defaults = ['Apple', 'Google', 'the European Union']
+defaults = ['Boeing']
 company_options = st.multiselect(
-      'Companies to plot',
+      'Click to select different companies to plot on the line chart below',
       companies, defaults)
 
 new_df = get_companies_per_week(company_options, df)
-st.line_chart(new_df, x='Week')
+st.line_chart(new_df, x='Week', height=300)
 
 events = [
   {
