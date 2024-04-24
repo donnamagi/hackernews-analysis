@@ -127,12 +127,10 @@ df, long_df = get_all_companies_per_week()
 st.scatter_chart(long_df, x='Company', y='Week', size='Mentions', color='Company', height=400)
 
 st.write("""
-         Besides the clear technical bias, there is no obvious pattern to the amount of front-page attention 
-         companies receive. 
-         
-         I suspected a correlation with real-world events that trigger this spike in community attention. 
+         There is a clear technical bias to the companies and organisations in focus, with no obvious pattern to the amount 
+         of front-page attention companies receive. 
 
-         ##### Let's take a closer look
+         #### Finding reasons
 
          Why was Google mentioned so frequently in the week of February 11th, 2024? Filtering the articles of that week
          for the keyword 'Google' gives us this:
@@ -146,6 +144,13 @@ st.write(weekly_df)
 st.write("""
          Based on the titles of the articles, this seems to be the week when Google released two new AI models. Google was
          a recurring conversation topic in the technical community due to its groundbreaking, but controversial launches.
+
+         #### Conclusion
+
+         The rise in weekly mentions of companies are in alignment with real-world events.
+         
+         GitHub is an outlier - many mentions of Github were due to the articles promoting their work in GitHub repositories, 
+         not news related to the company itself
          """)
 
 ## build something like – select company and get the articles for it?
@@ -162,12 +167,9 @@ st.write("""
 
 st.write("## Significant events")
 
-st.write("""
-          The weekly mentions of companies are seem to align with real-world events.
-          As I investigated further, I found a few events that stood out in the dataset.
-         
-          It became apparent that certain events and key announcement influenced the community's 
-          general attention towards certain more general topics. 
+st.write("""         
+         The discourse around certain key events influenced the community's attention. There is not only an uptick
+         in the mentions of companies or technologies involved, but often the underlying issues as well. 
           """)
 
 events = get_events()
