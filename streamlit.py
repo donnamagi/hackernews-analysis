@@ -11,15 +11,68 @@ from events import get_events
 export = pd.read_csv(f'exports/export_2024-04-21.csv')
 keywords = pd.read_csv(f'exports/keywords_2024-04-21.csv')
 
+st.write("""
+        # Hi!
+         
+        This is an exposé of my work from the last semester. I set out to create my own dataset of stories and articles 
+        from Hacker News, and trying to find connections and extract insights from the data I was processing.
+        
+         """)
 
-st.write("## The data I am working with")
+st.write(" ## What is Hacker News?")
+col1, col2 = st.columns(2)
+col1.write(keywords)
+col2.write("""
+            
+          Hacker News, as defined by their Wikipedia, is a social news website focusing on computer science and 
+          entrepreneurship. 
+           
+          In general, content that can be submitted is defined as **"anything that gratifies one's intellectual curiosity"**.
+           
+          As you can see from the keywords on the left though, there is a definite bias to technical topics in the community.
+        
+          """)
+
+st.bar_chart(keywords, y="frequency", x="keyword")
+
+st.write("""
+         ## Introduction to the dataset
+        
+         Although there are datasets available on the content of this website, none of them were recent. Hacker News does 
+         however have an open API that allowed me to access their articles and statistics in real time. This provoked me 
+         to create my own dataset.
+
+        #### My data aggregation process
+         
+         - Each day, get the top 50 trending articles from Hacker News 
+         - Store the metrics, comments, etc data from Hacker News 
+         - Get the content of the article (often on third party websites)
+         - Synthesize and process the content using Llama 2 (a locally running LLM)
+         - Extract mentions of organisations and topics (referenced as "keywords" in the dataset)
+
+         #### First 100 lines of the dataset
+
+         """)
+
+# get down to 50 or 100 or so
 st.write(export)
 
-st.write("## List of most frequently recurring keywords")
-st.write(keywords)
+st.write("""
 
-st.write("## Articles added per week")
-st.line_chart(get_articles_per_week(), x='date', y='Count')
+         However, I learned that the frontline trending articles tend to, on average, stay there for 1-3 days. That meant unique
+         content added per day was more around 10-15 articles.
+
+         The dependency on me to trigger the data aggregation script daily is a definite cause of some inconsistency in the dataset. 
+         The week of March 25th introduced a dip in articles processed - this is not related to anomalies on Hacker News, but me 
+         missing three days of content.
+
+         """)
+
+st.write("#### Articles added per week")
+# fix dates with range names
+# and pull more articles
+st.line_chart(get_articles_per_week(), x='date', y='Count', width="container")
+
 
 st.write("## Mentions of keywords per day")
 
