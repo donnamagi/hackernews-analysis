@@ -80,12 +80,9 @@ st.write("""
          I wished to visualize the articles on Hacker News through their semantic meaning. For this, comparing the article embedding's 
          cosine similarity helped me create graph visualisations of the data. 
          
-         Starting out with a cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
-         From this, I would infer to say that in general, the trending content on Hacker News is a rather coherent subset of similar 
-         articles - at least in their choices of topic.  
-
          #### Graph of the complete dataset
-         As of April 7th, with a cosine similarity treshold of 0.7
+         As of April 7th, 2024.
+         A cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
 
          """)
 
@@ -95,6 +92,13 @@ st.write("""
 st.write(""" 
          By increasing the cosine similarity treshold and enhancing the edge weights, I was able to produce more coherent and 
          telling graphs.
+
+         #### Conclusion
+         
+         In general, the trending content on Hacker News is a rather coherent body of knowledge. 
+         
+         Although Hacker News brands itself as a forum for "anything interesting", it is rare to have front-page articles on 
+         topics unrelated to technology.
          """)
 
 
@@ -144,13 +148,6 @@ st.write(weekly_df)
 st.write("""
          Based on the titles of the articles, this seems to be the week when Google released two new AI models. Google was
          a recurring conversation topic in the technical community due to its groundbreaking, but controversial launches.
-
-         #### Conclusion
-
-         The rise in weekly mentions of companies are in alignment with real-world events.
-         
-         GitHub is an outlier - many mentions of Github were due to the articles promoting their work in GitHub repositories, 
-         not news related to the company itself
          """)
 
 ## build something like – select company and get the articles for it?
@@ -165,7 +162,7 @@ st.write("""
 # new_df = get_companies_per_week(company_options, df)
 # st.line_chart(new_df, x='Week', height=300)
 
-st.write("## Significant events")
+st.write("#### Significant events")
 
 st.write("""         
          The discourse around certain key events influenced the community's attention. There is not only an uptick
@@ -252,6 +249,7 @@ with tab3:
     use_container_width=True
 )
 
+## replace with google and gemini?
 with tab4:
   st.write("""Around March 19th, the topic of Glassdoor's user privacy went viral after a technical glitch.
             With anonymous reviews of companies being publicised with names, the trustworthiness
@@ -275,5 +273,34 @@ with tab4:
     (chart + annotation_layer).interactive(),
     use_container_width=True
 )
+  
+st.write("""
+         #### Conclusion
 
+         The rise in weekly mentions of companies are in alignment with real-world events.
 
+         Outstanding events triggered shifts in discourse, producing noticeable spikes in keyword mentions also for the more
+         general related topics. 
+         
+         GitHub is an outlier - many mentions of Github were due to the articles promoting their work in GitHub repositories, 
+         not news related to the company itself.
+         """)
+
+st.write("""
+         ## Tracking sentiment
+
+         I wished to track sentiment in the community regarding certain companies, in parallel with the events happening that might have
+         influenced the community's general opinion.
+
+         My hypothesis was that by analyzing the comments of relevant articles, I would get a telling overview on community sentiment.
+         
+         
+         Hacker News' comment section is notorious for being very skeptical and rather negative.
+         As a result, I expected the sentiment analysis to also rather tend towards negative opinions. 
+         """)
+
+st.write("""
+         #### This has been my exposé. 
+         
+         ### Thank you for your attention!
+         """)
