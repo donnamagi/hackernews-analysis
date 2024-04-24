@@ -49,6 +49,7 @@ st.write("""
          - Get the content of the article (often on third party websites)
          - Synthesize and process the content using Llama 2 (a locally running LLM)
          - Extract mentions of organisations and topics (referenced as "keywords" in the dataset)
+         - Create embeddings from the processed content
 
          #### First 100 lines of the dataset
 
@@ -73,29 +74,55 @@ st.write("#### Articles added per week")
 # and pull more articles
 st.line_chart(get_articles_per_week(), x='date', y='Count', width="container")
 
+st.write(""" 
+         ## Knowledge body
 
-st.write("## Mentions of keywords per day")
+         I wished to visualize the articles on Hacker News through their semantic meaning. For this, comparing the article embedding's 
+         cosine similarity helped me create graph visualisations of the data. 
+         
+         Starting out with a cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
+         From this, I would infer to say that in general, the trending content on Hacker News is a rather coherent subset of similar 
+         articles - at least in their choices of topic.  
 
-options = ['AI', 'Apple', 'GitHub', 'Security', 'Performance', 'Google', 'API', 
-           'Development', 'Technology', 'Language models', 'Privacy', 'Open-source', 
-           'EU', 'Open source', 'Linux', 'Automation', 'the European Union']
-options = st.multiselect(
-    'Choose keywords to plot',
-    options,
-    options)
+         #### Graph of the complete dataset
+         As of April 7th, with a cosine similarity treshold of 0.7
 
-st.scatter_chart(get_mentions_per_day(options), x='date', size= options[0])
+         """)
+
+### ADD IMAGES OF GRAPHS
+# or somehow the graph itself?
+
+st.write(""" 
+         By increasing the cosine similarity treshold and enhancing the edge weights, I was able to produce more coherent and 
+         telling graphs.
+         """)
+
+
+# TOPIC CLUSTERS? That you could select? would be cool
+
+# st.write("## Mentions of keywords per day")
+
+# options = ['AI', 'Apple', 'GitHub', 'Security', 'Performance', 'Google', 'API', 
+#            'Development', 'Technology', 'Language models', 'Privacy', 'Open-source', 
+#            'EU', 'Open source', 'Linux', 'Automation', 'the European Union']
+# options = st.multiselect(
+#     'Choose keywords to plot',
+#     options,
+#     options)
+
+# st.scatter_chart(get_mentions_per_day(options), x='date', size= options[0])
 
 st.write("# Companies in the spotlight")
 st.write("""
-         To start from somewhere, I looked into the most popular keywords per week.
-         From there, I filtered out the mentions of companies and other organizations.
-
-         This is not every organization mentioned in the dataset, but rather companies that
-         stood out in the top 15 conversational keywords every week.
+         Many companies were mentioned in the dataset on an occasional basis. Because of the limited size of the dataset,
+         I believed it would be more meaningful to draw conclusions when working with aggregated data on a weekly basis. 
+         
+         For this, I filtered out the mentions of companies and other organizations, and compared how popular they were in 
+         comparison with other topics that week. Any company not included in the top 15 most common keywords for that week 
+         was excluded from this subset.
          """)
 
-st.write("### Companies mentioned per week")
+st.write("#### Companies mentioned per week")
 df, long_df = get_all_companies_per_week()
 st.scatter_chart(long_df, x='Company', y='Week', size='Mentions', color='Company', height=400)
 
@@ -116,17 +143,22 @@ weekly_df = weekly_df[weekly_df['keywords'].str.contains('Google', case=False, n
 weekly_df = weekly_df[['title', 'keywords', 'content_summary', 'Date', 'Processing Date']]
 st.write(weekly_df)
 
-st.write("Based on the titles of the articles, this seems to be the week when Google released two new AI models.")
+st.write("""
+         Based on the titles of the articles, this seems to be the week when Google released two new AI models. Google was
+         a recurring conversation topic in the technical community due to its groundbreaking, but controversial launches.
+         """)
 
 ## build something like – select company and get the articles for it?
-companies = ['Boeing', 'Google', 'Intel', 'Apple', 'GitHub', 'Android', 'the European Union', 'ChatGPT', 'YouTube']
-defaults = ['Boeing']
-company_options = st.multiselect(
-      'Click to select different companies to plot on the line chart below',
-      companies, defaults)
+## probably not relevant. but maybe?
 
-new_df = get_companies_per_week(company_options, df)
-st.line_chart(new_df, x='Week', height=300)
+# companies = ['Boeing', 'Google', 'Intel', 'Apple', 'GitHub', 'Android', 'the European Union', 'ChatGPT', 'YouTube']
+# defaults = ['Boeing']
+# company_options = st.multiselect(
+#       'Click to select different companies to plot on the line chart below',
+#       companies, defaults)
+
+# new_df = get_companies_per_week(company_options, df)
+# st.line_chart(new_df, x='Week', height=300)
 
 st.write("## Significant events")
 
