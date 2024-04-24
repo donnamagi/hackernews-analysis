@@ -75,3 +75,16 @@ def get_all_db_data():
   if len(res) == 1000:
     return print("Limit reached. Only first 1000 items returned.")
   return res
+
+#maybe do smth like compare what got most attention during the period?
+
+def get_all_with_comments():
+  res = client.query(
+    collection_name= 'HackerNews',
+    filter="id > 0",
+    output_fields= ["id", "title", "keywords", "time", "score", "kids"],
+    limit=1000
+  )
+  if len(res) == 1000:
+    return print("Limit reached. Only first 1000 items returned.")
+  return res
