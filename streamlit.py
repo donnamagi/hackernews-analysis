@@ -79,54 +79,76 @@ st.write("""
 
          I wished to visualize the articles on Hacker News through their semantic meaning. For this, comparing the article embedding's 
          cosine similarity helped me create graph visualisations of the data. 
+
+         I wished to see if the articles formed any noticeable clusters, and if so, what topics were most prevalent in the dataset.
          
          #### Graph of the complete dataset
-         As of April 7th, 2024.
-         A cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
+         Graphs below are generated from the dataset as of April 7th, 2024.
 
+         A cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
          """)
 
-### ADD IMAGES OF GRAPHS
-# or somehow the graph itself?
+caption = "Graph of the complete dataset with a cosine similarity treshold of 0.7"
+st.image(image="./og_graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write(""" 
-         By increasing the cosine similarity treshold and enhancing the edge weights, I was able to produce more coherent and 
-         telling graphs.
+         By increasing the cosine similarity treshold and tinkering with the edge weights, I was able to produce more coherent and 
+         readable graphs later on.
+
+         For example, on the graph below, I hypothesized that the most high-degree articles would provide insights into the most popular
+         topics on Hacker News.
+        
+         I filtered out the nodes with a degree of less than 6, and titled the most high-degree nodes by their keywords.
+         """)
+
+caption = "Graph of only nodes with degree > 6, with the most high-degree nodes titled by their keywords."
+st.image(image="./keywords-graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+
+st.write("""
+
+         This was rather telling of the most popular topics on Hacker News. The most recurring topic clusters were related to AI, 
+         open source work, both hardware and software development, and - quite surprisingly to me - discussions around licensing and 
+         regulations.
+
+         The outlier node on the top of the graph represents and interesting subsection of articles that I would title as personal projects.
+         The article in question was about a book generated from the author's personal messaging history, and related to many other articles
+         around people showcasing their pet projects.
 
          #### Conclusion
          
          In general, the trending content on Hacker News is a rather coherent body of knowledge. 
+
+         Graphs of the dataset were a viable way to gain insights into the main topic clusters discussed on the platform.
          
          Although Hacker News brands itself as a forum for "anything interesting", it is rare to have front-page articles on 
          topics unrelated to technology.
          """)
 
-
-# TOPIC CLUSTERS? That you could select? would be cool
-
-# st.write("## Mentions of keywords per day")
-
-# options = ['AI', 'Apple', 'GitHub', 'Security', 'Performance', 'Google', 'API', 
-#            'Development', 'Technology', 'Language models', 'Privacy', 'Open-source', 
-#            'EU', 'Open source', 'Linux', 'Automation', 'the European Union']
-# options = st.multiselect(
-#     'Choose keywords to plot',
-#     options,
-#     options)
-
-# st.scatter_chart(get_mentions_per_day(options), x='date', size= options[0])
-
 st.write("# Companies in the spotlight")
 st.write("""
          Many companies were mentioned in the dataset on an occasional basis. Because of the limited size of the dataset,
          I believed it would be more meaningful to draw conclusions when working with aggregated data on a weekly basis. 
-         
-         For this, I filtered out the mentions of companies and other organizations, and compared how popular they were in 
-         comparison with other topics that week. Any company not included in the top 15 most common keywords for that week 
+
+         I wanted to see if the mentions of companies were in any way related to the most popular topics of the week, and if 
+         there were any noticeable correlations of real world events.
+
+         """)
+
+caption = "Most mentioned companies per week"
+st.image(image="./top-5.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+
+st.write("""
+         I wished to track the mentions of the most popular companies in the dataset over the total period to see more general
+         popularity trends. The graph above, an early attempt on visualizing this data, seemed riddled with outliers.
+
+         For this, I found the 20 most mentioned companies overall, and compared how popular they were on a weekly basis in 
+         comparison with the other topics that week. Any company not included in the top 15 most common keywords for that week 
          was excluded from this subset.
          """)
 
 st.write("#### Companies mentioned per week")
+
+# EXPORT
 df, long_df = get_all_companies_per_week()
 st.scatter_chart(long_df, x='Company', y='Week', size='Mentions', color='Company', height=400)
 
@@ -149,18 +171,6 @@ st.write("""
          Based on the titles of the articles, this seems to be the week when Google released two new AI models. Google was
          a recurring conversation topic in the technical community due to its groundbreaking, but controversial launches.
          """)
-
-## build something like – select company and get the articles for it?
-## probably not relevant. but maybe?
-
-# companies = ['Boeing', 'Google', 'Intel', 'Apple', 'GitHub', 'Android', 'the European Union', 'ChatGPT', 'YouTube']
-# defaults = ['Boeing']
-# company_options = st.multiselect(
-#       'Click to select different companies to plot on the line chart below',
-#       companies, defaults)
-
-# new_df = get_companies_per_week(company_options, df)
-# st.line_chart(new_df, x='Week', height=300)
 
 st.write("#### Significant events")
 
@@ -284,22 +294,7 @@ st.write("""
          
          GitHub is an outlier - many mentions of Github were due to the articles promoting their work in GitHub repositories, 
          not news related to the company itself.
-         """)
 
-st.write("""
-         ## Tracking sentiment
-
-         I wished to track sentiment in the community regarding certain companies, in parallel with the events happening that might have
-         influenced the community's general opinion.
-
-         My hypothesis was that by analyzing the comments of relevant articles, I would get a telling overview on community sentiment.
-         
-         
-         Hacker News' comment section is notorious for being very skeptical and rather negative.
-         As a result, I expected the sentiment analysis to also rather tend towards negative opinions. 
-         """)
-
-st.write("""
          #### This has been my exposé. 
          
          ### Thank you for your attention!
