@@ -77,49 +77,48 @@ st.line_chart(articles_df, x='date', y='Count', width="container")
 
 st.write(""" 
          
-
          The dependency on manually triggering the data aggregation script daily has introduced some inconsistency in the dataset. Specifically, the week of 
          March 25th introduced a notable gap in the amount of articles processed - this can be attributed to a 3-day lapse in executing the script, not 
          anomalies on Hacker News itself.
-         
+
          ## Visualizing the dataset
 
-         I wished to visualize the articles on Hacker News through their semantic meaning. For this, comparing the article embedding's 
-         cosine similarity helped me create graph visualisations of the data. 
+         To visualize the articles on Hacker News through their semantic structure, I utilized cosine similarity analysis of article embeddings
+         to create graph visualisations of the data. 
 
-         I wished to see if the articles formed any noticeable clusters, and if so, what topics were most prevalent in the dataset.
+         I wished to determine whether the articles formed any noticeable clusters, and, if so, identify what topics were most prevalent in the dataset.
          
          #### Graph of the complete dataset
-         Graphs below are generated from the dataset as of April 7th, 2024.
+         Graphs below are based on the dataset as of April 7th, 2024.
 
-         A cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
+         Applying a cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
          """)
 
 caption = "Graph of the complete dataset with a cosine similarity treshold of 0.7"
 st.image(image="./demo/og_graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write(""" 
-         By increasing the cosine similarity treshold and tinkering with the edge weights, I was able to produce more coherent and 
-         readable graphs later on.
+         To enhanche the clarity and coherence of the graphs, I iteratively adjusted the cosine similarity treshold and edge weights.
 
-         For example, on the graph below, I hypothesized that the most high-degree articles would provide insights into the most popular
+         I hypothesized that the nodes (articles) with the highest degree centrality would provide insights into the most popular
          topics on Hacker News.
         
-         I filtered out the nodes with a degree of less than 6, and titled the most high-degree nodes by their keywords.
+         To identify these articles, I applied a degree threshold of 6, filterint out nodes with less connection to the general corpus 
+         of articles. Sequentially, I labeled the highest-degree nodes by their corresponding keywords to provide some context.
          """)
 
-caption = "Graph of only nodes with degree > 6, with the most high-degree nodes titled by their keywords."
+caption = "Graph of nodes with degree > 6, with the highest-degree nodes labeled by their keywords."
 st.image(image="./demo/keywords-graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write("""
+         
+         This refined graph revealed the most central articles on Hacker News, providing insights to the clusters of popular topics. 
+         The most recurring topics were related to Artificial Intelligence, open-source initiatives, and both hardware and software 
+         development. Notably, discussions surrounding licensing and regulations also emerged as a significant theme.
 
-         This was rather telling of the most popular topics on Hacker News. The most recurring topic clusters were related to AI, 
-         open source work, both hardware and software development, and - quite surprisingly to me - discussions around licensing and 
-         regulations.
-
-         The outlier node on the top of the graph represents and interesting subsection of articles that I would title as personal projects.
-         The article in question was about a book generated from the author's personal messaging history, and related to many other articles
-         around people showcasing their pet projects.
+         The outlier node on top of the graph represents and interesting subset of articles that can be categorized as personal projects.
+         The central article in question was about a book generated from the author's personal messaging history, and related to 
+         other articles featuring individuals showcasing their pet projects.
 
          #### Conclusion
          
@@ -134,10 +133,12 @@ st.write("""
 st.write("# Companies in the spotlight")
 st.write("""
          Many companies were mentioned in the dataset on an occasional basis. Because of the limited size of the dataset,
-         I believed it would be more meaningful to draw conclusions when working with aggregated data on a weekly basis. 
+         I believed it would be more insightful to draw conclusions when working with aggregated data on a weekly basis. 
 
-         I wanted to see if the mentions of companies were in any way related to the most popular topics of the week, and if 
-         there were any noticeable correlations of real world events.
+         I examined whether certain companies were associated with the most popular topics of the week, and if there 
+         were any noticeable correlations with real-world events.
+
+         Popularity in this context is defined as the number of mentions in the dataset.
 
          """)
 
@@ -145,12 +146,14 @@ caption = "Most mentioned companies per week"
 st.image(image="./demo/top-5.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write("""
-         I wished to track the mentions of the most popular companies in the dataset over the total period to see more general
-         popularity trends. The graph above, an early attempt on visualizing this data, seemed riddled with outliers.
+         The graph above, an early attempt on visualizing this data, seemed riddled with outliers, likely due to the small dataset. 
+         I wished to track the mentions of the all-time most mentioned companies across the entire period, aimind to identify more general
+         popularity trends.
 
-         For this, I found the 20 most mentioned companies overall, and compared how popular they were on a weekly basis in 
-         comparison with the other topics that week. Any company not included in the top 15 most common keywords for that week 
+         For this, I identified the 20 most popular companies overall, and use time series analysis to compare their weekly popularity in 
+         comparison with other weekly trending topics. Any company not included in the top 15 most popular keywords for that week 
          was excluded from this subset.
+
          """)
 
 st.write("#### Companies mentioned per week")
@@ -160,13 +163,17 @@ long_df = pd.read_csv('demo/weekly_companies_long_2024-04-25.csv')
 st.scatter_chart(long_df, x='Company', y='Week', size='Mentions', color='Company', height=400)
 
 st.write("""
-         There is a clear technical bias to the companies and organisations in focus, with no obvious pattern to the amount 
-         of front-page attention companies receive. 
+         There is a clear technical bias to the companies and organisations in focus, with no obvious pattern or correlation with 
+         company size to the amount of front-page attention different entities received. 
 
-         #### Finding reasons
+         Most likely, the patterns in the data are due to real-world events, such as product launches or controversial decisions.
 
-         Why was Google mentioned so frequently in the week of February 11th, 2024? Filtering the articles of that week
-         for the keyword 'Google' gives us this:
+         #### Deep dive into the data
+
+         To prove this hypothesis, I decided to investigate the weekly mentions of Google in the dataset.
+
+         Why was Google mentioned so frequently in the week of February 11th, 2024? Filtering the articles of February 11th, 2024
+         for the keyword 'Google' revealed the following articles:
          """)
 
 weekly_df = pd.read_csv('demo/weekly_2024-02-19.csv')
@@ -175,8 +182,8 @@ weekly_df = weekly_df[['title', 'keywords', 'content_summary', 'Date', 'Processi
 st.write(weekly_df)
 
 st.write("""
-         Based on the titles of the articles, this seems to be the week when Google released two new AI models. Google was
-         a recurring conversation topic in the technical community due to its groundbreaking, but controversial launches.
+         Based on the titles of the articles, this week can be correlated to when Google released two new AI models. Google was
+         a recurring conversation topic in the technical community due to its groundbreaking, but controversial product reveals.
          """)
 
 st.write("#### Significant events")
@@ -243,9 +250,10 @@ with tab2:
 
 with tab3:
   st.write("""
-           Google released a new groundbreaking LLM model called Gemini on February 15th. Early reviewers of the model quickly 
-           realized that the model was heavily biased towards certain racial groups, and that the model emphasized representation
-           over historical accuracy. The release sparked a discussion about the dangers of misinformation and the future of AI presence.
+           Google released a new groundbreaking LLM model called Gemini on February 15th. Early reviewers of the model noted 
+           that the model was heavily biased towards certain racial groups, and that it emphasized representation
+           over historical accuracy. The release sparked a discussion about the dangers of misinformation and the future of 
+           AI's influence.
            """)
   st.write(f"Counting mentions for the following keywords: {events[2]['keywords']}")
   chart = alt.Chart(events[2]['df']).mark_circle().encode(
@@ -275,7 +283,7 @@ st.write("""
          Outstanding events triggered shifts in discourse, producing noticeable spikes in keyword mentions also for the more
          general related topics. 
          
-         GitHub is an outlier - many mentions of Github were due to the articles promoting their work in GitHub repositories, 
+         GitHub is an outlier - consistent mentions of Github were due to the articles promoting their work in GitHub repositories, 
          not news related to the company itself.
 
          #### This has been my exposé. 
