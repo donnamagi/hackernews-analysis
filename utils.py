@@ -46,7 +46,7 @@ def get_articles_per_week():
 
 def get_keywords_per_day():
   data = []
-  df = pd.read_csv(f'exports/export_2024-04-21.csv')
+  df = pd.read_csv(f'demo/export_2024-04-25.csv')
   df.drop(df.index[0], inplace=True) # csv header row
 
   df = convert_to_datetime(df)

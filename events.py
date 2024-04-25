@@ -17,14 +17,9 @@ def get_events():
       'keywords': ['Apple', 'Epic Games', 'Fortnite', 'The Digital Markets Act', 'App Store', 'Spotify', 'Lawsuit']
     },
     {
-      'title': 'The AI Act',
-      'annotations': [('Mar 12, 2024', 'The finalizing of the AI Act is announced on March 12th')],
-      'keywords': ['EU', 'the European Union', 'Artificial intelligence', 'AI Act']
-    },
-    {
-      'title': 'Glassdoor leak',
-      'annotations': [('Mar 19, 2024', 'Glassdoor users discover their anonymous reviews are public on March 19th')],
-      'keywords': ['Glassdoor', 'Privacy', 'User data', 'Leak', 'Data breach']
+      'title': "Google's LLM release",
+      'annotations': [('Feb 15, 2024', 'Gemini AI announces the release of LLM on February 15th')],
+      'keywords': ['Gemini', 'Google', 'Racial representation', 'Historical accuracy', 'Misinformation', 'Safety']
     }
   ]
 

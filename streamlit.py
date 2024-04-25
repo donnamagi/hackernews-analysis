@@ -183,7 +183,7 @@ st.write("""
 
 events = get_events()
 titles = [event['title'] for event in events]
-tab1, tab2, tab3, tab4 = st.tabs(titles)
+tab1, tab2, tab3 = st.tabs(titles)
 
 with tab1:
   st.write("""A security backdoor was found in a widely used open source piece of software - XZ. 
@@ -238,9 +238,10 @@ with tab2:
 
 with tab3:
   st.write("""
-           The AI Act was passed by the European Union on March 13th, which set new regulations for AI systems.
-           The act was met with mixed reactions, with some praising the EU for taking a step towards AI regulation,
-           while others criticized the act for being too restrictive.""")
+           Google released a new groundbreaking LLM model called Gemini on February 15th. Early reviewers of the model quickly 
+           realized that the model was heavily biased towards certain racial groups, and that the model emphasized representation
+           over historical accuracy. The release sparked a discussion about the dangers of misinformation and the future of AI presence.
+           """)
   st.write(f"Counting mentions for the following keywords: {events[2]['keywords']}")
   chart = alt.Chart(events[2]['df']).mark_circle().encode(
     x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[2]['keywords']
@@ -248,31 +249,6 @@ with tab3:
 
   annotation_layer = (
     alt.Chart(events[2]['annotations'])
-    .mark_text(size=20, text="⬇", dx=0, dy=-10, align="center", baseline="middle", color="white")
-    .encode(
-        x="date:T",
-        y=alt.Y("Total mentions:Q"),
-        tooltip=["event"],
-    )
-    .interactive()
-  )
-  st.altair_chart(
-    (chart + annotation_layer).interactive(),
-    use_container_width=True
-)
-
-## replace with google and gemini?
-with tab4:
-  st.write("""Around March 19th, the topic of Glassdoor's user privacy went viral after a technical glitch.
-            With anonymous reviews of companies being publicised with names, the trustworthiness
-            of Glassdoor was under heavy scrutiny.""")
-  st.write(f"Counting mentions for the following keywords: {events[3]['keywords']}")
-  chart = alt.Chart(events[3]['df']).mark_circle().encode(
-    x='date', y='Total mentions', size='Total mentions', color='Total mentions', tooltip=['date'] + events[3]['keywords']
-  ).interactive()
-
-  annotation_layer = (
-    alt.Chart(events[3]['annotations'])
     .mark_text(size=20, text="⬇", dx=0, dy=-10, align="center", baseline="middle", color="white")
     .encode(
         x="date:T",
