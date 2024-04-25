@@ -8,19 +8,19 @@ export = pd.read_csv(f'demo/export_2024-04-25.csv')
 keywords = pd.read_csv(f'demo/keywords_2024-04-25.csv')
 
 st.write("""
-        # Analysis of trending content on Hacker News 
+        # Analysis of trending content on the web platform Hacker News 
          
         This is an exposé of my work from the last semester. The objective of this project was to create my own dataset of 
         stories and articles from Hacker News, and to find connections and extract insights from the data I was processing.
         
          """)
 
-st.write(" ## What is Hacker News?")
+st.write(" ## Introduction to Hacker News")
 col1, col2 = st.columns(2)
 col1.write(keywords)
 col2.write("""
             
-          Hacker News, as defined by their Wikipedia, is a social news website focusing on computer science and 
+          [Hacker News](https://news.ycombinator.com), as defined by their Wikipedia, is a social news website focusing on computer science and 
           entrepreneurship. 
            
           In general, content that can be submitted is defined as **"anything that gratifies one's intellectual curiosity"**.
@@ -31,7 +31,7 @@ col2.write("""
 
 st.write("""
          As this dataset has been created between February and April 2024 - a time of rapid growth in the field of 
-         artificial intelligence - it is not surprising that mentions of AI surpass all other topics.
+         artificial intelligence - mentions of AI surpass all other topics.
          """)
 
 st.bar_chart(keywords.head(10), y="frequency", x="keyword")
@@ -91,14 +91,14 @@ st.write("""
          #### Graph of the complete dataset
          Graphs below are based on the dataset as of April 7th, 2024.
 
-         Applying a cosine similarity treshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
+         Applying a cosine similarity threshold > 0.7 produced a dense graph with very few outliers or distinguishable patterns.
          """)
 
-caption = "Graph of the complete dataset with a cosine similarity treshold of 0.7"
+caption = "Graph of the complete dataset with a cosine similarity threshold of 0.7"
 st.image(image="./demo/og_graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write(""" 
-         To enhanche the clarity and coherence of the graphs, I iteratively adjusted the cosine similarity treshold and edge weights.
+         To enhanche the clarity and coherence of the graphs, I iteratively adjusted the cosine similarity threshold and edge weights.
 
          I hypothesized that the nodes (articles) with the highest degree centrality would provide insights into the most popular
          topics on Hacker News.
@@ -286,7 +286,31 @@ st.write("""
          GitHub is an outlier - consistent mentions of Github were due to the articles promoting their work in GitHub repositories, 
          not news related to the company itself.
 
-         #### This has been my exposé. 
+         ## Future work
+
+         The dataset is still in its infancy, and there are many avenues for further analysis and improvement:
          
-         ### Thank you for your attention!
+         #### Sentiment analysis 
+         
+         Sentiment analysis of the articles and their corresponding commentary by the community could provide insights into 
+         the community's general mood and opinions on the topics discussed, as well as the companies and technologies involved. 
+
+         This could be analysed in opposition with market data to see if there are any correlations between the community's 
+         sentiment and the stock market.
+
+          #### Data aggregation
+
+         Entity recognition could be improved to better identify companies and organizations in the articles. For now, this
+         process was aided by manually removing certain wrongfully labeled common abbreviations.
+
+         The process of data aggregation could be automated to ensure a more consistent dataset.
+
+
+          #### Time series analysis
+         
+         As the dataset grows, time series analysis could provide insights into the evolvement of the community's interests, 
+         as well as the tech scene.
+
+         The current dataset could equally be compared to older datasets, if equally processed, to identify trends and shifts in
+         the community's interests over time.
          """)
