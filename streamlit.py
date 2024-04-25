@@ -1,15 +1,13 @@
 import pandas as pd
-import numpy as np
 import streamlit as st
-from datetime import datetime
 import altair as alt
-from utils import get_articles_per_week, get_mentions_per_day, get_week_start_end_dates
-from trying import get_all_companies_per_week, get_companies_per_week
+from utils import get_articles_per_week
+from trying import get_all_companies_per_week
 from events import get_events
 
 
-export = pd.read_csv(f'exports/export_2024-04-21.csv')
-keywords = pd.read_csv(f'exports/keywords_2024-04-21.csv')
+export = pd.read_csv(f'demo/export_2024-04-25.csv')
+keywords = pd.read_csv(f'demo/keywords_2024-04-25.csv')
 
 st.write("""
         # Hi!
@@ -33,7 +31,11 @@ col2.write("""
         
           """)
 
-st.bar_chart(keywords, y="frequency", x="keyword")
+st.write("""
+         And as this dataset has been created between February and April 2024 - a time of rapid growth in the field of 
+         artificial intelligence - it is not surprising that mentions of AI surpass all other topics.
+         """)
+st.bar_chart(keywords.head(10), y="frequency", x="keyword")
 
 st.write("""
          ## Introduction to the dataset
@@ -42,9 +44,11 @@ st.write("""
          however have an open API that allowed me to access their articles and statistics in real time. This provoked me 
          to create my own dataset.
 
+         By the time of this exposé, I have 700 processed articles from Hacker News.
+
         #### My data aggregation process
          
-         - Each day, get the top 50 trending articles from Hacker News 
+         - Each day, get the top 30 trending articles from Hacker News 
          - Store the metrics, comments, etc data from Hacker News 
          - Get the content of the article (often on third party websites)
          - Synthesize and process the content using Llama 2 (a locally running LLM)
@@ -55,8 +59,7 @@ st.write("""
 
          """)
 
-# get down to 50 or 100 or so
-st.write(export)
+st.write(export.head(101))
 
 st.write("""
 
