@@ -92,7 +92,7 @@ st.write("""
          """)
 
 caption = "Graph of the complete dataset with a cosine similarity treshold of 0.7"
-st.image(image="./og_graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+st.image(image="./demo/og_graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write(""" 
          By increasing the cosine similarity treshold and tinkering with the edge weights, I was able to produce more coherent and 
@@ -105,7 +105,7 @@ st.write("""
          """)
 
 caption = "Graph of only nodes with degree > 6, with the most high-degree nodes titled by their keywords."
-st.image(image="./keywords-graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+st.image(image="./demo/keywords-graph.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write("""
 
@@ -138,7 +138,7 @@ st.write("""
          """)
 
 caption = "Most mentioned companies per week"
-st.image(image="./top-5.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+st.image(image="./demo/top-5.png", caption=caption, width=None, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
 
 st.write("""
          I wished to track the mentions of the most popular companies in the dataset over the total period to see more general
