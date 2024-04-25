@@ -10,9 +10,8 @@ keywords = pd.read_csv(f'demo/keywords_2024-04-25.csv')
 st.write("""
         # Analysis of trending content on the web platform Hacker News 
          
-        This is an exposé of my work from the last semester. The objective of this project was to create my own dataset of 
-        stories and articles from Hacker News, and to find connections and extract insights from the data I was processing.
-        
+         The objective of this project was to create my own dataset of stories and articles from Hacker News, and to find insightful 
+         correlations between the popular discourse in the tech community and real world events. 
          """)
 
 st.write(" ## Introduction to Hacker News")
@@ -20,8 +19,8 @@ col1, col2 = st.columns(2)
 col1.write(keywords)
 col2.write("""
             
-          [Hacker News](https://news.ycombinator.com), as defined by their Wikipedia, is a social news website focusing on computer science and 
-          entrepreneurship. 
+          [Hacker News](https://news.ycombinator.com), as defined by their Wikipedia, is a social news website focusing on 
+          computer science and entrepreneurship. 
            
           In general, content that can be submitted is defined as **"anything that gratifies one's intellectual curiosity"**.
           
@@ -146,7 +145,7 @@ st.image(image="./demo/top-5.png", caption=caption, width=None, use_column_width
 
 st.write("""
          The graph above, an early attempt on visualizing this data, seemed riddled with outliers, likely due to the small dataset. 
-         I wished to track the mentions of the all-time most mentioned companies across the entire period, aimind to identify more general
+         I wished to track the mentions of the all-time most mentioned companies across the entire period, aiming to identify more general
          popularity trends.
 
          For this, I identified the 20 most popular companies overall, and use time series analysis to compare their weekly popularity in 
