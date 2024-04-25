@@ -15,7 +15,7 @@ def get_all_companies_per_week():
   date_ranges = list(zip(all_dates_by_week[:-1], all_dates_by_week[1:])) 
   date_ranges_named = [f"{start.date().strftime('%m.%d')} - {end.date().strftime('%m.%d')}" for start, end in date_ranges]  
 
-  df = pd.read_csv(f'exports/export_2024-04-21.csv')
+  df = pd.read_csv(f'exports/export_2024-04-25.csv')
   weekly_keywords = []
   df['time'] = pd.to_datetime(df['time'], unit='s')
 
@@ -94,6 +94,12 @@ def get_all_companies_per_week():
 
   df = pd.DataFrame(data, columns=columns)
   long_format_df = pd.melt(df, id_vars=['Week'], var_name='Company', value_name='Mentions')
+
+  csv_file_path = f'exports/weekly_companies_{datetime.now().strftime("%Y-%m-%d")}.csv'
+  df.to_csv(csv_file_path, index=False)
+
+  long_csv_file_path = f'exports/weekly_companies_long_{datetime.now().strftime("%Y-%m-%d")}.csv'
+  long_format_df.to_csv(long_csv_file_path, index=False)
 
   return df, long_format_df
 

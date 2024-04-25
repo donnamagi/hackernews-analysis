@@ -24,8 +24,9 @@ def new_csv():
   results = get_all_db_data()
   df = pd.DataFrame(results)
 
-  # turn unix timestamps into datetime objects
-  df = convert_to_datetime(df)
+  # for the dataset demo readability
+  # turn unix timestamps into datetime objects 
+  # df = convert_to_datetime(df)
 
   csv_file_path = f'exports/export_{datetime.now().strftime("%Y-%m-%d")}.csv'
   df.to_csv(csv_file_path, index=False)

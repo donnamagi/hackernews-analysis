@@ -2,7 +2,6 @@ import pandas as pd
 import streamlit as st
 import altair as alt
 from utils import get_articles_per_week
-from trying import get_all_companies_per_week
 from events import get_events
 
 
@@ -151,8 +150,8 @@ st.write("""
 
 st.write("#### Companies mentioned per week")
 
-# EXPORT
-df, long_df = get_all_companies_per_week()
+
+long_df = pd.read_csv('demo/weekly_companies_long_2024-04-25.csv')
 st.scatter_chart(long_df, x='Company', y='Week', size='Mentions', color='Company', height=400)
 
 st.write("""
@@ -165,7 +164,7 @@ st.write("""
          for the keyword 'Google' gives us this:
          """)
 
-weekly_df = pd.read_csv('exports/weekly/weekly_2024-02-19.csv')
+weekly_df = pd.read_csv('demo/weekly_2024-02-19.csv')
 weekly_df = weekly_df[weekly_df['keywords'].str.contains('Google', case=False, na=False)]
 weekly_df = weekly_df[['title', 'keywords', 'content_summary', 'Date', 'Processing Date']]
 st.write(weekly_df)
