@@ -279,8 +279,9 @@ st.write("""
 
          The rise in weekly mentions of companies are in alignment with real-world events.
 
-         Outstanding events triggered shifts in discourse, producing noticeable spikes in keyword mentions also for the more
-         general related topics. 
+         Outstanding events may have triggered shifts in discourse, producing spikes in keyword mentions also for the more
+         general related topics. However, the amount of overall mentions are too low to draw any definitive conclusions of 
+         this correlation.
          
          GitHub is an outlier - consistent mentions of Github were due to the articles promoting their work in GitHub repositories, 
          not news related to the company itself.
@@ -300,9 +301,10 @@ st.write("""
           #### Data aggregation
 
          Entity recognition could be improved to better identify companies and organizations in the articles. For now, this
-         process was aided by manually removing certain wrongfully labeled common abbreviations.
+         process was manually aided by removing certain common abbreviations spaCy had wrongfully labeled as organisations.
 
-         The process of data aggregation could be automated to ensure a more consistent dataset.
+         The process of data aggregation could be automated to ensure a more consistent dataset. Processing more articles per day
+         could also benefit the dataset's size and quality of analysis. 
 
 
           #### Time series analysis
