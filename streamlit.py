@@ -10,6 +10,10 @@ keywords = pd.read_csv(f'demo/keywords_2024-04-25.csv')
 st.write("""
         # Analysis of trending content on the web platform Hacker News 
          
+         The deployed version of this report can be found here:
+
+         [https://hackernews-demo.streamlit.app/](https://hackernews-demo.streamlit.app/)
+         
          The objective of this project was to create my own dataset of stories and articles from Hacker News, and to find insightful 
          correlations between the popular discourse in the tech community and real world events. 
          """)
