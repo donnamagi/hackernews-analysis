@@ -90,6 +90,3 @@ def get_week_start_end_dates():
   df = convert_to_datetime(df)
   all_dates_by_week = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='W-MON', unit='s')
   return all_dates_by_week
-
-
-get_articles_per_week()
