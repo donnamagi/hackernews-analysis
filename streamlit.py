@@ -24,9 +24,8 @@ col2.write("""
           entrepreneurship. 
            
           In general, content that can be submitted is defined as **"anything that gratifies one's intellectual curiosity"**.
-           
-          As you can see from the keywords on the left, there is a definite bias to technical topics in the community.
-        
+          
+          On the left is a list of the most prevalent topic mentions in the dataset.
           """)
 
 st.write("""
