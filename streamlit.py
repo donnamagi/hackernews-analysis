@@ -8,10 +8,10 @@ export = pd.read_csv(f'demo/export_2024-04-25.csv')
 keywords = pd.read_csv(f'demo/keywords_2024-04-25.csv')
 
 st.write("""
-        # Hi!
+        # Analysis of trending content on Hacker News 
          
-        This is an exposé of my work from the last semester. I set out to create my own dataset of stories and articles 
-        from Hacker News, and trying to find connections and extract insights from the data I was processing.
+        This is an exposé of my work from the last semester. The objective of this project was to create my own dataset of 
+        stories and articles from Hacker News, and to find connections and extract insights from the data I was processing.
         
          """)
 
@@ -25,12 +25,12 @@ col2.write("""
            
           In general, content that can be submitted is defined as **"anything that gratifies one's intellectual curiosity"**.
            
-          As you can see from the keywords on the left though, there is a definite bias to technical topics in the community.
+          As you can see from the keywords on the left, there is a definite bias to technical topics in the community.
         
           """)
 
 st.write("""
-         And as this dataset has been created between February and April 2024 - a time of rapid growth in the field of 
+         As this dataset has been created between February and April 2024 - a time of rapid growth in the field of 
          artificial intelligence - it is not surprising that mentions of AI surpass all other topics.
          """)
 
@@ -39,21 +39,24 @@ st.bar_chart(keywords.head(10), y="frequency", x="keyword")
 st.write("""
          ## Introduction to the dataset
         
-         Although there are datasets available on the content of this website, none of them were recent. Hacker News does 
-         however have an open API that allowed me to access their articles and statistics in real time. This provoked me 
-         to create my own dataset.
+         Existing datasets available for the content on Hacker News were outdated. This prompted me to create a new dataset
+         which uses the website's open API to access articles and statistics in real time. 
 
-         By the time of this exposé, I have 700 processed articles from Hacker News.
+         At the time of this report, the dataset comprises of over 700 processed articles from Hacker News.
 
-        #### My data aggregation process
+        ### Data aggregation methodology
          
-         - Each day, get the top 30 trending articles from Hacker News 
-         - Store the metrics, comments, etc data from Hacker News 
-         - Get the content of the article (often on third party websites)
-         - Synthesize and process the content using Llama 2 (a locally running LLM)
-         - Extract mentions of organisations and topics (referenced as "keywords" in the dataset)
-         - Create embeddings from the processed content
+         A systematic process was employed to collect and process articles from Hacker News. The methodology involved:
+         
 
+          1. **Daily Article Retrieval**: The top 30 trending articles from Hacker News were retrieved on a daily basis.
+          2. **Metadata Collection**: Associated metrics, comments, and other relevant data were extracted from Hacker News.
+          3. **Content Acquisition**: The content of each article was retrieved from their respective source.
+          4. **Content Processing**: The article content was cleaned and synthesized using Llama 2, a locally running Large Language Model (LLM).
+          5. **Entity Extraction**: Mentions of organizations and topics (referred to as "keywords" in the dataset) were extracted from the processed content.
+          6. **Embedding Generation**: Vector embeddings were created from the processed content, enabling further analysis and modeling.
+          7. **Data Storage**: The processed data was stored in a vector database for further analysis and visualization.
+         
          #### First 100 lines of the dataset
 
          """)
@@ -62,12 +65,8 @@ st.write(export.head(101))
 
 st.write("""
 
-         However, I learned that the frontline trending articles tend to, on average, stay there for 1-3 days. That meant unique
-         content added per day was more around 10-15 articles.
-
-         The dependency on me to trigger the data aggregation script daily is a definite cause of some inconsistency in the dataset. 
-         The week of March 25th introduced a dip in articles processed - this is not related to anomalies on Hacker News, but me 
-         missing three days of content.
+         Although 30 articles were chosen for processing every day (equivalent to the front page of Hacker News), the frontline trending articles tended to, 
+         on average, stay there for 1-3 days. That meant unique content added per day was more around 7-10 articles.
 
          """)
 
@@ -77,6 +76,12 @@ articles_df = pd.read_csv('demo/articles_per_week_2024-04-25.csv')
 st.line_chart(articles_df, x='date', y='Count', width="container")
 
 st.write(""" 
+         
+
+         The dependency on manually triggering the data aggregation script daily has introduced some inconsistency in the dataset. Specifically, the week of 
+         March 25th introduced a notable gap in the amount of articles processed - this can be attributed to a 3-day lapse in executing the script, not 
+         anomalies on Hacker News itself.
+         
          ## Visualizing the dataset
 
          I wished to visualize the articles on Hacker News through their semantic meaning. For this, comparing the article embedding's 
