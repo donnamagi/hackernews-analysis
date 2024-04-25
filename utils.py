@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import ast
+from datetime import datetime
 
 def convert_to_datetime(df):
   df['date'] = pd.to_datetime(df['time'], unit='s')
@@ -12,29 +13,36 @@ def get_list(x):
   return ast.literal_eval(x)
 
 def get_dataframes_by_week():
-  df = pd.read_csv(f'exports/export_2024-04-21.csv')
+  df = pd.read_csv(f'exports/export_2024-04-25.csv')
   all_dates_by_week = get_week_start_end_dates()
+
+  df = convert_to_datetime(df)
 
   for i in range(len(all_dates_by_week)-1):
     start_date = all_dates_by_week[i]
+    print(start_date)
     end_date = all_dates_by_week[i+1]
+    print(end_date)
 
     week_df = df[(df['date'] >= start_date) & (df['date'] < end_date)]
-    
-    return week_df
-    # week_df.to_csv(f'exports/weekly/weekly_{start_date.strftime("%Y-%m-%d")}.csv', index=False)
+    print(f'exports/weekly/weekly_{start_date.strftime("%Y-%m-%d")}.csv')
+    week_df.to_csv(f'exports/weekly/weekly_{start_date.strftime("%Y-%m-%d")}.csv', index=False)
+
 
 def get_articles_per_week():
   data = []
   for file in os.listdir('exports/weekly'):
     df = pd.read_csv(f'exports/weekly/{file}')
 
-    # create a new dataframe with the count of articles per week
+    # creates a new dataframe with the count of articles per week
     count = df['id'].count()
     date = file.split('_')[1].split('.')[0]
     data.append({'date': date, 'Count': count})
 
-  return pd.DataFrame(data, columns=['date', 'Count'])
+  df = pd.DataFrame(data, columns=['date', 'Count'])
+
+  filepath = f'demo/articles_per_week_{datetime.now().strftime("%Y-%m-%d")}.csv'
+  df.to_csv(filepath, index=False)
 
 def get_keywords_per_day():
   data = []
@@ -76,9 +84,12 @@ def get_mentions_per_day(keywords: list):
   return pd.DataFrame(keyword_mentions, columns=columns)
 
 def get_week_start_end_dates():
-  df = pd.read_csv(f'exports/export_2024-04-21.csv')
+  df = pd.read_csv(f'exports/export_2024-04-25.csv')
   df.drop(df.index[0], inplace=True) # csv header row
 
   df = convert_to_datetime(df)
-  all_dates_by_week = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='W-MON')
+  all_dates_by_week = pd.date_range(start=df['date'].min(), end=df['date'].max(), freq='W-MON', unit='s')
   return all_dates_by_week
+
+
+get_articles_per_week()

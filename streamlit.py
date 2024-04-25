@@ -1,7 +1,6 @@
 import pandas as pd
 import streamlit as st
 import altair as alt
-from utils import get_articles_per_week
 from events import get_events
 
 
@@ -34,6 +33,7 @@ st.write("""
          And as this dataset has been created between February and April 2024 - a time of rapid growth in the field of 
          artificial intelligence - it is not surprising that mentions of AI surpass all other topics.
          """)
+
 st.bar_chart(keywords.head(10), y="frequency", x="keyword")
 
 st.write("""
@@ -72,12 +72,12 @@ st.write("""
          """)
 
 st.write("#### Articles added per week")
-# fix dates with range names
-# and pull more articles
-st.line_chart(get_articles_per_week(), x='date', y='Count', width="container")
+
+articles_df = pd.read_csv('demo/articles_per_week_2024-04-25.csv')
+st.line_chart(articles_df, x='date', y='Count', width="container")
 
 st.write(""" 
-         ## Knowledge body
+         ## Visualizing the dataset
 
          I wished to visualize the articles on Hacker News through their semantic meaning. For this, comparing the article embedding's 
          cosine similarity helped me create graph visualisations of the data. 
