@@ -12,6 +12,8 @@ st.write("""
          
          The objective of this project was to create my own dataset of stories and articles from Hacker News, and to find insightful 
          correlations between the popular discourse in the tech community and real world events. 
+
+         The code repository can be found here: [GitHub](https://github.com/donnamagi/newsletter-backend)
          """)
 
 st.write(" ## Introduction to Hacker News")
