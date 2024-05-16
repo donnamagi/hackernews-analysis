@@ -15,12 +15,21 @@ def main():
     process_collection(collection, ids, date)
 
 def process_collection(collection, ids, date):
+  faulty=set()
   for id in ids:
     if id not in collection:
-      process_entry(id, date)
-      collection.add(id)
+      try:
+        process_entry(id, date)
+        collection.add(id)
+      except Exception as e:
+        faulty.add((id, e))
     else:
       print(f"{id} already in collection.")
+  print("done")
+  if faulty:
+    print("failed to process the following articles")
+    for t in faulty:
+      print(t)
 
 def process_entry(id, date):
   story = get_hn_story(id)
