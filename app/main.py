@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import hackernews
+from .routers import hackernews, milvus
 
 app = FastAPI()
 
@@ -18,7 +18,8 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-app.include_router(hackernews.app)
+app.include_router(hackernews.router)
+app.include_router(milvus.router)
 
 @app.get("/")
 async def root():

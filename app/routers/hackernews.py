@@ -8,7 +8,7 @@ import os
 
 load_dotenv()
 
-app = APIRouter(prefix="/hn", tags=["Hacker News"])
+router = APIRouter(prefix="/hn", tags=["Hacker News"])
 
 HN_BASE_URL = "https://hacker-news.firebaseio.com/v0"
 MONGODB_URI = os.getenv("MONGODB_URI")
@@ -16,7 +16,7 @@ MONGODB_URI = os.getenv("MONGODB_URI")
 client = MongoClient(MONGODB_URI, server_api=ServerApi('1'))
 db = client['hackernews']['source-data']
 
-@app.get("/insert/all") 
+@router.get("/insert/all") 
 async def insert_all_recents_to_db():
   top_stories = requests.get(f"{HN_BASE_URL}/topstories.json")
   new_stories = requests.get(f"{HN_BASE_URL}/newstories.json")
@@ -41,7 +41,7 @@ async def insert_all_recents_to_db():
     print(e)
 
 
-@app.get("/item/{item_id}")
+@router.get("/item/{item_id}")
 async def insert_item(item_id: int):
   response = requests.get(f"{HN_BASE_URL}/item/{item_id}.json")
   try:
